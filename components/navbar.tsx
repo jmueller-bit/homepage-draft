@@ -40,7 +40,7 @@ export function Navbar() {
                 priority
               />
             </div>
-            <span className="font-sans text-xl font-extrabold text-charcoal hidden sm:inline-block">
+            <span className="font-sans text-xl font-bold text-charcoal hidden sm:inline-block">
               Astrid Lindgren Zentrum
             </span>
           </Link>
