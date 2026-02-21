@@ -60,9 +60,11 @@ export default async function NewsPage() {
                       <h2 className="mt-2 font-sans text-xl font-bold text-charcoal hover:text-primary transition-colors">
                         {news.title}
                       </h2>
-                      <p className="mt-2 font-serif text-charcoal/70 line-clamp-3">
-                        {news.excerpt}
-                      </p>
+                      {news.excerpt && (
+                        <p className="mt-2 font-serif text-charcoal/70 line-clamp-3">
+                          {news.excerpt}
+                        </p>
+                      )}
                       <Button variant="link" className="mt-4 h-auto p-0 text-primary">
                         Weiterlesen →
                       </Button>

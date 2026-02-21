@@ -109,7 +109,9 @@ export default async function NewsDetailPage({ params }: Props) {
           </h1>
 
           <div className="mt-8 font-serif text-lg text-charcoal/80 space-y-3">
-            {renderRichText(news.content)}
+            {renderRichText(news.content) || (
+              <p className="font-serif text-charcoal/70">Der Inhalt dieses Artikels folgt in Kürze.</p>
+            )}
           </div>
 
           <div className="mt-12 pt-8 border-t border-charcoal/10">

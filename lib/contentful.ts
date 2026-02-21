@@ -51,13 +51,13 @@ function mapNewsEntry(entry: any): NewsEntry | null {
 
   const title = fields.titel || fields.title
   const slug = fields.slug
-  const excerpt = fields.vorschautext || fields.excerpt
+  const excerpt = fields.vorschautext || fields.excerpt || ''
   const date = fields.datum || fields.publishDate || fields.date
   const content = fields.inhalt || fields.content
   const category = fields.kategorie || fields.category
   const imageAsset = fields.titelbild || fields.coverImage
 
-  if (!title || !slug || !excerpt || !date) {
+  if (!title || !slug || !date) {
     return null
   }
 
