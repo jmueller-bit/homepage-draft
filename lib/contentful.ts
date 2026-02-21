@@ -7,6 +7,11 @@ export const contentfulClient = createClient({
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'TODO',
 })
 
+// Validate that environment variables are actually present at runtime
+if (process.env.CONTENTFUL_SPACE_ID === 'TODO' || !process.env.CONTENTFUL_SPACE_ID) {
+  console.warn('⚠️ WARNING: CONTENTFUL_SPACE_ID is not set in environment variables! Contentful API will fail.');
+}
+
 export type NewsEntry = {
   id: string
   title: string
@@ -120,7 +125,7 @@ function mapTeamEntry(entry: any): TeamEntry | null {
   const fields = entry.fields as Record<string, any>
 
   const name = fields.name || fields.titel || fields.vorname || fields.fullName
-  const role = fields.role || fields.rolle || fields.position
+  const role = fields.funktion || fields.role || fields.rolle || fields.position
   const bio = fields.bio || fields.beschreibung || fields.text
   const order = fields.order ?? fields.reihenfolge
   const photoAsset = fields.photo || fields.foto || fields.bild
