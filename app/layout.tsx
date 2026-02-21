@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Nunito, Merriweather } from 'next/font/google'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 
 const nunito = Nunito({
@@ -73,6 +75,8 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )
