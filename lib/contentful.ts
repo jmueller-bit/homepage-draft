@@ -1,12 +1,21 @@
 import { createClient } from 'contentful'
+import { createClient as createManagementClient } from 'contentful-management'
 
-const NEWS_CONTENT_TYPE = 'newsArtikel'
-const GALLERY_CONTENT_TYPE = 'galleryImage'
+export const NEWS_CONTENT_TYPE = 'newsArtikel'
+export const GALLERY_CONTENT_TYPE = 'galleryImage'
 
+// Delivery Client (read-only, für öffentliche Website)
 export const contentfulClient = createClient({
   space: process.env.CONTENTFUL_SPACE_ID || 'TODO',
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'TODO',
 })
+
+// Management Client (für Admin-Panel - Create/Update/Delete)
+export const contentfulManagementClient = process.env.CONTENTFUL_MANAGEMENT_TOKEN 
+  ? createManagementClient({
+      accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
+    })
+  : null
 
 // Validate that environment variables are actually present at runtime
 if (process.env.CONTENTFUL_SPACE_ID === 'TODO' || !process.env.CONTENTFUL_SPACE_ID) {
