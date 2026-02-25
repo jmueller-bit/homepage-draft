@@ -121,3 +121,55 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    // Prüfe ob Management Client verfügbar
+    const managementClient = await getManagementClient()
+    if (!managementClient) {
+      return NextResponse.json(
+        { error: 'Admin-Panel nicht konfiguriert. CONTENTFUL_MANAGEMENT_TOKEN fehlt.' },
+        { status: 503 }
+      )
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID erforderlich' },
+        { status: 400 }
+      )
+    }
+
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const environment = await space.getEnvironment('master')
+
+    // Entry holen
+    const entry = await environment.getEntry(id)
+    
+    // Falls publiziert, erst unpublizieren
+    if (entry.isPublished()) {
+      await entry.unpublish()
+    }
+    
+    // Löschen
+    await entry.delete()
+
+    // Vercel Deployment triggern
+    const deployResult = await triggerVercelDeploy()
+
+    return NextResponse.json({
+      success: true,
+      message: 'News erfolgreich gelöscht',
+      deploy: deployResult.success ? 'Deployment gestartet' : 'Deployment übersprungen'
+    })
+  } catch (error: any) {
+    console.error('Error deleting news:', error)
+    return NextResponse.json(
+      { error: error.message || 'Fehler beim Löschen der News' },
+      { status: 500 }
+    )
+  }
+}

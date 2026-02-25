@@ -8,7 +8,9 @@ import {
   Plus, 
   ExternalLink,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Trash2,
+  X
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -20,6 +22,7 @@ export default function AdminNewsPage() {
   const [news, setNews] = useState<NewsEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -44,6 +47,30 @@ export default function AdminNewsPage() {
       setError('Verbindungsfehler')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Möchten Sie diese News wirklich löschen?\n\nDies kann nicht rückgängig gemacht werden.')) {
+      return
+    }
+
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/admin/news?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setNews(prev => prev.filter(item => item.id !== id))
+      } else {
+        const data = await response.json()
+        alert(data.error || 'Fehler beim Löschen')
+      }
+    } catch (err) {
+      alert('Verbindungsfehler beim Löschen')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -130,13 +157,27 @@ export default function AdminNewsPage() {
                         </span>
                       )}
                     </div>
-                    <Link 
-                      href={`/news/${item.slug}`}
-                      target="_blank"
-                      className="flex-shrink-0 p-2 text-charcoal/40 hover:text-primary"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Link>
+                    <div className="flex flex-col gap-1">
+                      <Link 
+                        href={`/news/${item.slug}`}
+                        target="_blank"
+                        className="p-2 text-charcoal/40 hover:text-primary"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        disabled={deletingId === item.id}
+                        className="p-2 text-charcoal/40 hover:text-red-500 disabled:opacity-50"
+                        title="Löschen"
+                      >
+                        {deletingId === item.id ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -147,8 +188,8 @@ export default function AdminNewsPage() {
         {/* Hinweis */}
         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-800 font-serif">
-            <strong>Hinweis:</strong> News werden im Contentful CMS verwaltet. 
-            Klicken Sie auf "Neu" um eine News zu erstellen.
+            <strong>Hinweis:</strong> Zum Löschen einer News klicken Sie auf das Mülleimer-Symbol. 
+            Die News wird aus Contentful entfernt.
           </p>
         </div>
       </main>
