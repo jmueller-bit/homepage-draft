@@ -18,6 +18,7 @@ export const getManagementClient = async () => {
   const { createClient } = await import('contentful-management')
   return createClient({
     accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
+    host: 'api.eu.contentful.com', // EU-Region!
   })
 }
 
