@@ -59,10 +59,9 @@ export async function POST(request: NextRequest) {
 
     // Upload Asset zu Contentful
     const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
     
     const upload = await environment.createUpload({
-      file: buffer,
+      file: bytes,
     })
 
     const asset = await environment.createAsset({
