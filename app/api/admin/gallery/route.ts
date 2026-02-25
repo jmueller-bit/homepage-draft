@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { contentfulClient, contentfulManagementClient, GALLERY_CONTENT_TYPE } from '@/lib/contentful'
+import { contentfulClient, getManagementClient, GALLERY_CONTENT_TYPE } from '@/lib/contentful'
+import { triggerVercelDeploy } from '@/lib/deploy'
 
 export async function GET() {
   try {
@@ -33,7 +34,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     // Prüfe ob Management Client verfügbar
-    if (!contentfulManagementClient) {
+    const managementClient = await getManagementClient()
+    if (!managementClient) {
       return NextResponse.json(
         { error: 'Admin-Panel nicht konfiguriert. CONTENTFUL_MANAGEMENT_TOKEN fehlt.' },
         { status: 503 }
@@ -52,7 +54,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const space = await contentfulManagementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
     const environment = await space.getEnvironment('master')
 
     // Upload Asset zu Contentful
@@ -108,10 +110,14 @@ export async function POST(request: NextRequest) {
 
     await entry.publish()
 
+    // Vercel Deployment triggern
+    const deployResult = await triggerVercelDeploy()
+
     return NextResponse.json({
       success: true,
       id: entry.sys.id,
       message: 'Bild erfolgreich hochgeladen',
+      deploy: deployResult.success ? 'Deployment gestartet' : 'Deployment übersprungen'
     })
   } catch (error: any) {
     console.error('Error uploading image:', error)
@@ -125,7 +131,8 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // Prüfe ob Management Client verfügbar
-    if (!contentfulManagementClient) {
+    const managementClient = await getManagementClient()
+    if (!managementClient) {
       return NextResponse.json(
         { error: 'Admin-Panel nicht konfiguriert. CONTENTFUL_MANAGEMENT_TOKEN fehlt.' },
         { status: 503 }
@@ -142,7 +149,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const space = await contentfulManagementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
     const environment = await space.getEnvironment('master')
 
     // Entry unpublizieren und löschen

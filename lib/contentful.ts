@@ -1,5 +1,4 @@
 import { createClient } from 'contentful'
-import { createClient as createManagementClient } from 'contentful-management'
 
 export const NEWS_CONTENT_TYPE = 'newsArtikel'
 export const GALLERY_CONTENT_TYPE = 'galleryImage'
@@ -11,11 +10,16 @@ export const contentfulClient = createClient({
 })
 
 // Management Client (für Admin-Panel - Create/Update/Delete)
-export const contentfulManagementClient = process.env.CONTENTFUL_MANAGEMENT_TOKEN 
-  ? createManagementClient({
-      accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-    })
-  : null
+// Dynamisch importiert um Build-Probleme zu vermeiden
+export const getManagementClient = async () => {
+  if (!process.env.CONTENTFUL_MANAGEMENT_TOKEN) {
+    return null
+  }
+  const { createClient } = await import('contentful-management')
+  return createClient({
+    accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
+  })
+}
 
 // Validate that environment variables are actually present at runtime
 if (process.env.CONTENTFUL_SPACE_ID === 'TODO' || !process.env.CONTENTFUL_SPACE_ID) {
