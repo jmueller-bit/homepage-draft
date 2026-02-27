@@ -15,6 +15,7 @@ const navigation = [
   { name: 'Schule', href: '/schule' },
   { name: 'News', href: '/news' },
   { name: 'Galerie', href: '/galerie' },
+  { name: 'Fördern', href: '/foerdern' },
   { name: 'Kontakt', href: '/kontakt' },
 ]
 
