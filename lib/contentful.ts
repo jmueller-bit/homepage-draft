@@ -285,6 +285,16 @@ export async function getTeamMembers(): Promise<TeamEntry[]> {
   return []
 }
 
+export async function getTeamMemberById(id: string): Promise<TeamEntry | null> {
+  try {
+    const entry = await contentfulClient.getEntry(id)
+    return mapTeamEntry(entry)
+  } catch (error) {
+    console.error(`Error fetching team member ${id}:`, error)
+    return null
+  }
+}
+
 export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
   if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
     console.warn('⚠️ Gallery: CONTENTFUL_SPACE_ID not set, returning empty array')

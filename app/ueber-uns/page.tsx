@@ -137,9 +137,10 @@ export default async function UeberUnsPage() {
             )}
 
             {teamMembers.map((member) => (
-              <div
+              <a
                 key={member.id}
-                className="group rounded-xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg"
+                href={`/ueber-uns/team/${member.id}`}
+                className="group block rounded-xl bg-white p-6 shadow-md transition-all hover:shadow-lg hover:scale-[1.02]"
               >
                 <div className="relative aspect-square overflow-hidden rounded-full">
                   {member.photo ? (
@@ -163,11 +164,15 @@ export default async function UeberUnsPage() {
                   {member.role}
                 </p>
                 {member.bio && (
-                  <p className="mt-2 font-serif text-sm text-charcoal/70">
+                  <p className="mt-2 font-serif text-sm text-charcoal/70 line-clamp-3">
                     {member.bio}
                   </p>
                 )}
-              </div>
+                <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-primary">
+                  <span>Mehr erfahren</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </div>
+              </a>
             ))}
           </div>
         </div>

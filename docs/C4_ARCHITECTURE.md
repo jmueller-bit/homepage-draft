@@ -14,7 +14,7 @@ Das C4 Modell besteht aus vier Ebenen:
 
 ## Level 1: System Context Diagram
 
-Das Astrid Lindgren Zentrum Website-System ist eine öffentliche Webanwendung für eine Privatschule in Wien.
+Das Astrid Lindgren Zentrum Website-System ist eine öffentliche Webanwendung für eine Privatschule in Wien mit integriertem Admin-Panel für Lehrer.
 
 ```mermaid
 C4Context
@@ -22,25 +22,29 @@ C4Context
     
     Person(eltern, "Eltern", "Interessierte Eltern, die Informationen über die Schule suchen")
     Person(besucher, "Website Besucher", "Potenzielle Schüler, Journalisten, Partner")
-    Person(admin, "Content Manager", "Schulmitarbeiter, die News und Galerie verwalten")
+    Person(lehrer, "Lehrer", "Schulmitarbeiter, die News und Galerie verwalten")
     
     System_Boundary(website, "Astrid Lindgren Zentrum Website") {
-        System(webapp, "Website", "Öffentliche Webanwendung für die Privatschule")
+        System(webapp, "Öffentliche Website", "Webanwendung für die Privatschule")
+        System(admin, "Admin Panel", "Internes CMS für Lehrer")
     }
     
     System_Ext(contentful, "Contentful", "Headless CMS für News, Team und Galerie")
     System_Ext(resend, "Resend", "E-Mail API für Kontaktformular")
     System_Ext(vercel, "Vercel", "Hosting & Deployment Platform")
     System_Ext(analytics, "Vercel Analytics", "Performance & Nutzungsanalyse")
+    System_Ext(telegram, "Telegram", "Benachrichtigungen für neue News")
     
     Rel(eltern, webapp, "Besucht für Informationen", "HTTPS")
     Rel(besucher, webapp, "Stöbert durch Inhalte", "HTTPS")
-    Rel(admin, contentful, "Verwaltet Content", "HTTPS/API")
+    Rel(lehrer, admin, "Verwaltet Content", "HTTPS")
     
+    Rel(admin, contentful, "Erstellt/Bearbeitet/Löscht Content", "REST API/HTTPS")
     Rel(webapp, contentful, "Holt News & Bilder", "REST API/HTTPS")
     Rel(webapp, resend, "Sendet Kontaktanfragen", "REST API/HTTPS")
     Rel(webapp, vercel, "Wird gehostet auf", "Deployment")
     Rel(webapp, analytics, "Sendet Tracking-Daten", "HTTPS")
+    Rel(admin, telegram, "Sendet Benachrichtigungen", "HTTPS/API")
     
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
@@ -51,7 +55,7 @@ C4Context
 |--------|-------------|
 | **Eltern** | Interessierte Eltern, die Informationen über die Schule suchen, Schulprogramme erkunden oder ihre Kinder anmelden möchten |
 | **Website Besucher** | Allgemeine Besucher wie potenzielle Schüler, Journalisten, Bildungspartner oder Neugierige |
-| **Content Manager** | Schulmitarbeiter, die über Contentful News-Artikel, Team-Informationen und Galerie-Bilder verwalten |
+| **Lehrer** | Schulmitarbeiter mit Zugriff auf das Admin-Panel zum Verwalten von News und Galerie |
 
 ### Externe Systeme
 
@@ -61,6 +65,7 @@ C4Context
 | **Resend** | E-Mail-Service für das Versenden von Kontaktanfragen aus dem Kontaktformular |
 | **Vercel** | Cloud-Hosting-Platform für das Deployment und die Bereitstellung der Website |
 | **Vercel Analytics** | Tracking von Performance-Metriken und Nutzungsstatistiken |
+| **Telegram** | Bot-Benachrichtigungen bei neuen News-Artikeln |
 
 ---
 
@@ -73,10 +78,11 @@ C4Container
     title Container Diagram - Astrid Lindgren Zentrum Website
     
     Person(user, "Benutzer", "Eltern, Besucher, Interessenten")
-    Person(admin, "Content Manager", "Verwaltet Content in Contentful")
+    Person(lehrer, "Lehrer", "Verwaltet Content über Admin-Panel")
     
     System_Boundary(website, "Astrid Lindgren Zentrum Website") {
-        Container(webapp, "Next.js Web Application", "TypeScript, React, Next.js 14", "Server-seitig gerenderte Webanwendung mit App Router")
+        Container(webapp, "Next.js Web Application", "TypeScript, React, Next.js 14", "Öffentliche Webanwendung mit App Router")
+        Container(admin_panel, "Admin Panel", "TypeScript, React, Next.js 14", "Internes CMS für Lehrer zum Verwalten von Content")
         Container(ui_lib, "shadcn/ui Components", "React, Radix UI, Tailwind", "Wiederverwendbare UI-Komponenten-Bibliothek")
         Container(utils, "Utility Library", "TypeScript", "Hilfsfunktionen und Formatter")
         
@@ -87,7 +93,8 @@ C4Container
         }
         
         Container_Boundary(server_side, "Server-Side Code") {
-            Container(contentful_lib, "Contentful Library", "TypeScript", "CMS Integration und Data Mapping")
+            Container(contentful_lib, "Contentful Library", "TypeScript", "CMS Integration (Delivery & Management API)")
+            Container(admin_api, "Admin API Routes", "TypeScript", "API-Endpunkte für Admin-Panel (CRUD)")
             Container(pages, "Page Components", "React Server Components", "Statische und dynamische Seiten")
         }
     }
@@ -97,16 +104,21 @@ C4Container
     System_Ext(vercel, "Vercel", "Edge Network", "Hosting & CDN")
     System_Ext(analytics, "Vercel Analytics", "Monitoring", "Performance Tracking")
     System_Ext(speed_insights, "Vercel Speed Insights", "Monitoring", "Core Web Vitals")
+    System_Ext(telegram_bot, "Telegram Bot API", "Messaging", "Benachrichtigungen")
     
     Rel(user, webapp, "Zugriff über Browser", "HTTPS/443")
-    Rel(admin, contentful, "Verwaltet Content", "HTTPS/API")
+    Rel(lehrer, admin_panel, "Verwaltet Content", "HTTPS/443")
     
+    Rel(admin_panel, admin_api, "Verwendet für CRUD-Operationen", "HTTP/Internal")
     Rel(webapp, contentful_lib, "Verwendet für CMS Zugriff", "Import/Function Call")
+    Rel(admin_api, contentful_lib, "Verwendet Management API", "Import/Function Call")
     Rel(webapp, ui_lib, "Verwendet UI Komponenten", "Import")
-    Rel(webapp, utils, "Verwendet Hilfsfunktionen", "Import")
+    Rel(admin_panel, ui_lib, "Verwendet UI Komponenten", "Import")
     
     Rel(contentful_lib, contentful, "Holt Content über", "REST API/HTTPS")
+    Rel(admin_api, contentful, "Schreibt Content in", "REST API/HTTPS")
     Rel(webapp, resend, "Sendet E-Mails via", "REST API/HTTPS")
+    Rel(admin_api, telegram_bot, "Sendet Benachrichtigungen", "HTTPS/API")
     Rel(webapp, analytics, "Sendet Analytics Daten", "HTTPS")
     Rel(webapp, speed_insights, "Sendet Performance Daten", "HTTPS")
     
@@ -119,10 +131,12 @@ C4Container
 
 | Container | Technologie | Beschreibung |
 |-----------|-------------|--------------|
-| **Next.js Web Application** | TypeScript, React, Next.js 14 | Hauptanwendung mit App Router, Server-Side Rendering und Static Site Generation |
+| **Next.js Web Application** | TypeScript, React, Next.js 14 | Öffentliche Website mit App Router, Server-Side Rendering und Static Site Generation |
+| **Admin Panel** | TypeScript, React, Next.js 14 | Internes CMS für Lehrer mit Login, News-Verwaltung und Galerie-Upload |
 | **shadcn/ui Components** | React, Radix UI, Tailwind CSS | Wiederverwendbare UI-Komponenten wie Button, Card, Input, etc. |
 | **Utility Library** | TypeScript | Gemeinsame Hilfsfunktionen wie `cn()` für Klassen-Merging und `formatDate()` |
-| **Contentful Library** | TypeScript, Contentful SDK | Abstraktionsschicht für Contentful API mit Typ-Definitionen und Mapping-Funktionen |
+| **Contentful Library** | TypeScript, Contentful SDK | Abstraktionsschicht für Contentful API (Delivery & Management) |
+| **Admin API Routes** | TypeScript, Next.js API Routes | Server-seitige API-Endpunkte für Admin-Panel (Create, Read, Update, Delete) |
 | **Navbar Component** | React, Framer Motion | Responsive Navigation mit Mobile Menu und Animationen |
 | **Footer Component** | React | Footer mit Navigationslinks, Kontaktdaten und Social Media |
 | **Page Components** | React Server Components | Server-seitig gerenderte Seiten für bessere SEO und Performance |
@@ -134,8 +148,9 @@ C4Container
 - **Styling**: Tailwind CSS 3.4+
 - **UI Library**: shadcn/ui (basierend auf Radix UI)
 - **Animationen**: Framer Motion 11.3+
-- **CMS**: Contentful SDK 10.15+
+- **CMS**: Contentful SDK 10.15+ (Delivery API) & contentful-management 11.35+ (Management API)
 - **E-Mail**: Resend 3.5+
+- **Messaging**: Telegram Bot API
 - **Icons**: Lucide React
 - **Deployment**: Vercel
 - **Analytics**: Vercel Analytics & Speed Insights
@@ -151,12 +166,13 @@ C4Component
     title Component Diagram - Next.js Web Application
     
     Person(user, "Website Benutzer")
+    Person(lehrer, "Lehrer (Admin)")
     
     Container_Boundary(app, "Next.js App") {
         Component(layout, "Root Layout", "TypeScript/React", "Grundlayout mit Fonts, Metadaten, Navbar, Footer")
         Component(globals_css, "Global Styles", "CSS", "Tailwind Direktiven und Custom Properties")
         
-        Container_Boundary(pages_dir, "App Router Pages") {
+        Container_Boundary(pages_dir, "App Router Pages (Public)") {
             Component(page_home, "Home Page", "RSC", "Startseite mit Hero, Features, News, CTA")
             Component(page_about, "Über uns Page", "RSC", "Informationen über die Schule")
             Component(page_school, "Schule Page", "RSC", "Schulprogramm und Konzept")
@@ -165,6 +181,19 @@ C4Component
             Component(page_gallery, "Galerie Page", "RSC + Client", "Bildergalerie mit Lightbox")
             Component(page_contact, "Kontakt Page", "RSC + Client", "Kontaktformular und Infos")
             Component(page_legal, "Legal Pages", "RSC", "Impressum & Datenschutz")
+        }
+        
+        Container_Boundary(admin_dir, "Admin Panel Pages") {
+            Component(admin_login, "Admin Login", "Client Component", "Passwort-basierte Authentifizierung")
+            Component(admin_dashboard, "Admin Dashboard", "Client Component", "Übersicht für Lehrer")
+            Component(admin_news_list, "Admin News List", "Client Component", "News verwalten mit Löschen")
+            Component(admin_news_new, "Admin News Create", "Client Component", "Neue News erstellen")
+            Component(admin_gallery, "Admin Gallery", "Client Component", "Bilder hochladen & löschen")
+        }
+        
+        Container_Boundary(api_dir, "API Routes") {
+            Component(api_news, "News API", "API Route", "GET/POST/DELETE für News")
+            Component(api_gallery, "Gallery API", "API Route", "GET/POST/DELETE für Galerie")
         }
         
         Container_Boundary(components_dir, "Components") {
@@ -185,7 +214,11 @@ C4Component
         }
         
         Container_Boundary(lib_dir, "Library") {
-            Component(contentful_client, "Contentful Client", "TypeScript", "CMS API Client")
+            Component(contentful_client, "Contentful Client", "TypeScript", "CMS API Client (Delivery)")
+            Component(contentful_mgmt, "Contentful Management", "TypeScript", "CMS Management API Client")
+            Component(admin_auth, "Admin Auth", "TypeScript", "Cookie-basierte Authentifizierung")
+            Component(telegram_lib, "Telegram Integration", "TypeScript", "Bot-Benachrichtigungen")
+            Component(deploy_hook, "Vercel Deploy Hook", "TypeScript", "Automatisches Redeployment")
             Component(utils_lib, "Utils", "TypeScript", "Hilfsfunktionen")
             
             Container_Boundary(types_dir, "Type Definitions") {
@@ -198,106 +231,120 @@ C4Component
     
     System_Ext(contentful, "Contentful CMS")
     System_Ext(resend, "Resend API")
+    System_Ext(telegram, "Telegram Bot")
     System_Ext(vercel_analytics, "Vercel Analytics")
     
     Rel(user, layout, "Zugriff auf Seiten via")
+    Rel(lehrer, admin_login, "Anmeldung via")
+    
     Rel(layout, globals_css, "Lädt Styles")
     Rel(layout, navbar, "Rendert")
     Rel(layout, footer, "Rendert")
     
     Rel(layout, page_home, "Rendert für /")
-    Rel(layout, page_about, "Rendert für /ueber-uns")
-    Rel(layout, page_school, "Rendert für /schule")
     Rel(layout, page_news_list, "Rendert für /news")
-    Rel(layout, page_news_detail, "Rendert für /news/[slug]")
-    Rel(layout, page_gallery, "Rendert für /galerie")
-    Rel(layout, page_contact, "Rendert für /kontakt")
+    Rel(admin_login, admin_dashboard, "Weiterleitung nach Login")
+    Rel(admin_dashboard, admin_news_list, "Navigation")
+    Rel(admin_dashboard, admin_gallery, "Navigation")
+    Rel(admin_news_list, admin_news_new, "Navigation")
+    
+    Rel(admin_news_new, api_news, "POST Request")
+    Rel(admin_news_list, api_news, "GET/DELETE Request")
+    Rel(admin_gallery, api_gallery, "GET/POST/DELETE Request")
+    
+    Rel(api_news, contentful_mgmt, "Ruft auf")
+    Rel(api_gallery, contentful_mgmt, "Ruft auf")
+    Rel(api_news, telegram_lib, "Sendet Benachrichtigung")
+    Rel(api_news, deploy_hook, "Triggert Redeploy")
     
     Rel(page_home, home_page, "Verwendet")
     Rel(page_gallery, gallery_client, "Verwendet")
     Rel(page_contact, contact_client, "Verwendet")
     
-    Rel(home_page, btn, "Verwendet")
-    Rel(home_page, card, "Verwendet")
-    Rel(contact_client, btn, "Verwendet")
-    Rel(contact_client, input, "Verwendet")
-    Rel(contact_client, textarea, "Verwendet")
-    Rel(contact_client, label, "Verwendet")
+    Rel(admin_login, admin_auth, "Verwendet")
+    Rel(admin_dashboard, admin_auth, "Prüft Auth")
     
-    Rel(page_home, contentful_client, "Ruft getLatestNews() auf")
-    Rel(page_news_list, contentful_client, "Ruft getNews() auf")
-    Rel(page_news_detail, contentful_client, "Ruft getNewsBySlug() auf")
-    Rel(page_gallery, contentful_client, "Ruft getGalleryImages() auf")
-    
-    Rel(contentful_client, news_type, "Verwendet")
-    Rel(contentful_client, team_type, "Verwendet")
-    Rel(contentful_client, gallery_type, "Verwendet")
-    Rel(contentful_client, utils_lib, "Verwendet für URL-Formatierung")
-    
-    Rel(contentful_client, contentful, "HTTP API Calls")
-    Rel(contact_client, resend, "Sendet E-Mails via API")
-    Rel(layout, vercel_analytics, "Initialisiert Tracking")
+    Rel(contentful_mgmt, contentful, "HTTP API Calls (Management)")
+    Rel(contentful_client, contentful, "HTTP API Calls (Delivery)")
+    Rel(telegram_lib, telegram, "Sendet Nachrichten")
+    Rel(deploy_hook, vercel_analytics, "Triggert Deployment")
     
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="3")
 ```
 
 ### Komponentenbeschreibungen
 
-#### Layout & Pages
+#### Public Pages
 
 | Komponente | Typ | Beschreibung |
 |------------|-----|--------------|
 | **Root Layout** | Server Component | Hauptlayout in `app/layout.tsx`. Definiert Fonts (Nunito, Merriweather), Metadaten für SEO, und das Grundgerüst mit Navbar und Footer |
 | **Home Page** | Server Component | Startseite in `app/page.tsx`. Server-seitiges Daten-Fetching für News |
-| **Über uns Page** | Server Component | Statische Seite mit Schulinformationen |
-| **Schule Page** | Server Component | Statische Seite mit Schulprogramm |
 | **News List** | Server Component | Listet alle News-Artikel mit Pagination |
 | **News Detail** | Server Component | Zeigt einzelne News-Artikel basierend auf slug |
 | **Galerie Page** | Server Component + Client | Kombiniert server-seitiges Daten-Fetching mit interaktiver Client-Galerie |
-| **Kontakt Page** | Server Component + Client | Kombiniert statische Kontaktinfos mit interaktivem Formular |
+
+#### Admin Panel Pages
+
+| Komponente | Typ | Beschreibung |
+|------------|-----|--------------|
+| **Admin Login** | Client Component | Einfaches Passwort-Login mit Cookie-Authentifizierung |
+| **Admin Dashboard** | Client Component | Übersicht mit Navigation zu News und Galerie |
+| **Admin News List** | Client Component | Zeigt alle News mit Lösch-Funktion (Mülleimer-Icon) |
+| **Admin News Create** | Client Component | Formular zum Erstellen neuer News mit Telegram-Benachrichtigung |
+| **Admin Gallery** | Client Component | Bilder hochladen und löschen mit Drag & Drop |
+
+#### API Routes
+
+| Komponente | Endpunkte | Beschreibung |
+|------------|-----------|--------------|
+| **News API** | GET, POST, DELETE | `/api/admin/news` - CRUD-Operationen für News |
+| **Gallery API** | GET, POST, DELETE | `/api/admin/gallery` - CRUD-Operationen für Galerie-Bilder |
 
 #### UI Components (shadcn/ui)
 
 | Komponente | Zweck |
 |------------|-------|
-| **Button** | Primäre UI-Interaktionselemente mit verschiedenen Varianten (primary, outline, ghost) |
+| **Button** | Primäre UI-Interaktionselemente mit verschiedenen Varianten (primary, outline, ghost, destructive) |
 | **Card** | Container für Inhaltsblöcke mit konsistentem Styling |
 | **Input** | Formular-Eingabefelder mit Validierung |
 | **Textarea** | Mehrzeilige Texteingabe für Nachrichten |
 | **Label** | Accessible Labels für Formularfelder |
-| **Accordion** | Aufklappbare Inhaltsbereiche für FAQs |
+| **Accordion** | Aufklappbare Inhaltsbereiche |
 
-#### Client Components
-
-| Komponente | Beschreibung |
-|------------|--------------|
-| **Navbar** | Responsive Navigation mit Mobile Menu, React State für Toggle, Framer Motion für Animationen |
-| **HomePage** | Komplexe Startseite mit Hero-Section, Features, Statistiken, News-Preview und CTA |
-| **GalerieClient** | Interaktive Bildergalerie mit Lightbox, Navigation, Keyboard Support |
-| **KontaktClient** | Kontaktformular mit Form-State, Validierung und Submit-Handling |
-
-#### Library
+#### Library Module
 
 | Komponente | Beschreibung |
 |------------|--------------|
-| **Contentful Client** | `lib/contentful.ts` - Enthält alle Funktionen für CMS-Zugriff: `getNews()`, `getNewsBySlug()`, `getLatestNews()`, `getTeamMembers()`, `getGalleryImages()`. Inklusive Mapping-Funktionen von Contentful-Format zu App-Format |
-| **Utils** | `lib/utils.ts` - `cn()` für Tailwind-Klassen-Merging, `formatDate()` für Datumsformatierung |
-| **Type Definitions** | `NewsEntry`, `TeamEntry`, `GalleryImage` - Strictly typed Interfaces für CMS-Daten |
+| **Contentful Client** | `lib/contentful.ts` - Delivery API für lesenden Zugriff |
+| **Contentful Management** | Dynamischer Import für Management API (siehe `getManagementClient()`) |
+| **Admin Auth** | `lib/admin-auth.ts` - Cookie-basierte Authentifizierung für Admin-Panel |
+| **Telegram Integration** | `lib/telegram.ts` - Bot-API für Benachrichtigungen bei neuen News |
+| **Vercel Deploy Hook** | `lib/deploy.ts` - Automatisches Redeployment nach Content-Änderungen |
+| **Utils** | `lib/utils.ts` - `cn()` für Tailwind-Klassen-Merging, `formatDate()` |
 
 ### Datenfluss
 
+#### Public Website
 1. **Seitenaufruf**: Benutzer ruft Seite auf
 2. **Server Rendering**: Next.js rendert Server Components (RSC)
 3. **Daten-Fetching**: Contentful Client holt Daten von CMS (bei dynamischen Seiten)
 4. **Hydration**: Client Components werden im Browser hydratisiert
 5. **Interaktion**: Benutzer interagiert mit Client Components (Formulare, Galerie)
-6. **API Calls**: Bei Bedarf werden API-Aufrufe an Resend oder Contentful gemacht
+
+#### Admin Panel
+1. **Login**: Lehrer gibt Passwort ein → Cookie wird gesetzt (8h gültig)
+2. **Dashboard**: Übersicht mit Navigation
+3. **Content erstellen**: Formular wird ausgefüllt und abgesendet
+4. **API Call**: POST an `/api/admin/news` oder `/api/admin/gallery`
+5. **CMS Update**: Management API schreibt in Contentful
+6. **Benachrichtigung**: Telegram-Bot sendet Nachricht (bei News)
+7. **Redeployment**: Vercel Deploy Hook triggert automatisches Redeploy
+8. **Live**: Neue Inhalte sind sofort auf der Website sichtbar
 
 ---
 
 ## Level 4: Code Diagram (Auszug)
-
-Diese Ebene zeigt die Implementationsdetails auf Code-Ebene.
 
 ### Contentful Integration - Code-Struktur
 
@@ -306,7 +353,8 @@ C4Component
     title Code Level - Contentful Library (Auszug)
     
     Container_Boundary(contentful_lib, "lib/contentful.ts") {
-        Component(client, "contentfulClient", "createClient()", "Contentful SDK Client mit Space ID und Access Token")
+        Component(delivery_client, "contentfulClient", "createClient()", "Contentful SDK Client (Delivery API)")
+        Component(mgmt_client, "getManagementClient()", "Async Function", "Dynamischer Import für Management API")
         
         Component(types, "Type Definitions", "TypeScript Interfaces", "NewsEntry, TeamEntry, GalleryImage")
         
@@ -315,55 +363,48 @@ C4Component
         Component(map_gallery, "mapGalleryImage()", "Mapping Function", "Konvertiert Contentful Response zu GalleryImage")
         
         Component(get_news, "getNews()", "Async Function", "Holt alle News-Einträge mit Limit")
-        Component(get_news_slug, "getNewsBySlug()", "Async Function", "Holt einzelnen News-Eintrag per Slug")
         Component(get_latest, "getLatestNews()", "Async Function", "Holt die neuesten News (default: 3)")
-        Component(get_team, "getTeamMembers()", "Async Function", "Holt alle Team-Mitglieder sortiert")
-        Component(get_gallery, "getGalleryImages()", "Async Function", "Holt Galerie-Bilder sortiert nach Reihenfolge")
     }
     
-    System_Ext(contentful_api, "Contentful REST API", "cdn.contentful.com")
+    System_Ext(contentful_delivery, "Contentful Delivery API", "cdn.contentful.com")
+    System_Ext(contentful_mgmt, "Contentful Management API", "api.eu.contentful.com")
     
-    Rel(client, contentful_api, "HTTP GET Requests")
-    Rel(get_news, client, "Verwendet für API Calls")
+    Rel(delivery_client, contentful_delivery, "HTTP GET Requests (Read)")
+    Rel(mgmt_client, contentful_mgmt, "HTTP Requests (Read/Write)")
+    Rel(get_news, delivery_client, "Verwendet für API Calls")
     Rel(get_news, map_news, "Ruft für jeden Eintrag auf")
-    Rel(map_news, types, "Gibt zurück als")
-    
-    Rel(get_latest, get_news, "Interner Aufruf oder eigene Implementierung")
-    Rel(get_news_slug, client, "Verwendet für API Calls")
-    
-    Rel(get_team, map_team, "Ruft für jeden Eintrag auf")
-    Rel(get_gallery, map_gallery, "Ruft für jeden Eintrag auf")
 ```
 
-### Page Component Pattern
+### Admin API Route - News
 
-```typescript
-// Beispiel: app/news/page.tsx (Server Component)
-import { getNews } from '@/lib/contentful'
-
-export const revalidate = 120 // ISR: Alle 2 Minuten neu generieren
-
-export default async function NewsPage() {
-  const news = await getNews(10)
-  return <NewsList news={news} />
-}
-```
-
-### Client Component Pattern
-
-```typescript
-// Beispiel: components/galerie-client.tsx (Client Component)
-'use client'
-
-import { useState } from 'react'
-import Lightbox from 'yet-another-react-lightbox'
-
-export default function GalerieClient({ images }) {
-  const [open, setOpen] = useState(false)
-  const [index, setIndex] = useState(0)
-  
-  // Interaktive Logik hier...
-}
+```mermaid
+C4Component
+    title Code Level - Admin News API Route
+    
+    Container_Boundary(api_route, "app/api/admin/news/route.ts") {
+        Component(get_handler, "GET Handler", "Async Function", "Ruft alle News ab")
+        Component(post_handler, "POST Handler", "Async Function", "Erstellt neue News")
+        Component(delete_handler, "DELETE Handler", "Async Function", "Löscht News")
+        
+        Component(validation, "validateBody()", "Function", "Prüft Pflichtfelder")
+        Component(slug_check, "checkExistingSlug()", "Function", "Prüft ob Slug bereits existiert")
+        Component(create_entry, "createEntry()", "Function", "Erstellt Contentful Entry")
+        Component(publish, "publish()", "Function", "Publiziert Entry")
+    }
+    
+    Container_Boundary(lib_modules, "Library Modules") {
+        Component(mgmt_client, "getManagementClient", "Lib Function", "Contentful Management API")
+        Component(telegram, "sendTelegramMessage", "Lib Function", "Telegram Benachrichtigung")
+        Component(deploy, "triggerVercelDeploy", "Lib Function", "Vercel Redeployment")
+    }
+    
+    Rel(post_handler, validation, "Ruft auf")
+    Rel(post_handler, slug_check, "Ruft auf")
+    Rel(post_handler, create_entry, "Ruft auf")
+    Rel(create_entry, publish, "Ruft auf")
+    Rel(post_handler, telegram, "Sendet Benachrichtigung")
+    Rel(post_handler, deploy, "Triggert Redeploy")
+    Rel(post_handler, mgmt_client, "Verwendet")
 ```
 
 ### Architektur-Patterns
@@ -375,8 +416,11 @@ export default function GalerieClient({ images }) {
 | **Client-Side Hydration** | Interaktive Komponenten mit `'use client'` werden im Browser hydratisiert |
 | **Component Composition** | Kleine, wiederverwendbare UI-Komponenten aus shadcn/ui |
 | **Data Mapping** | Contentful-Daten werden in App-spezifische Typen gemappt |
+| **Dynamic Imports** | Contentful Management Client wird dynamisch importiert um Build-Probleme zu vermeiden |
 | **Error Handling** | Graceful Degradation bei fehlenden CMS-Daten |
 | **Environment Configuration** | Sensitive Daten (API Keys) über Environment Variables |
+| **Cookie-Based Auth** | Einfache Authentifizierung für Admin-Panel ohne komplexes Auth-System |
+| **API Routes** | Server-seitige Endpunkte für CRUD-Operationen |
 
 ---
 
@@ -413,10 +457,11 @@ export default function GalerieClient({ images }) {
 
 | Package | Version | Zweck |
 |---------|---------|-------|
-| contentful | ^10.15.1 | Contentful SDK |
+| contentful | ^10.15.1 | Contentful Delivery API SDK |
+| contentful-management | ^11.35.0 | Contentful Management API SDK |
 | resend | ^3.5.0 | E-Mail API |
 
-### Monitoring
+### Monitoring & Notifications
 
 | Package | Version | Zweck |
 |---------|---------|-------|
@@ -455,24 +500,35 @@ C4Deployment
         Container(browser, "Web Browser", "HTML, CSS, JS")
     }
     
+    Deployment_Node(admin_browser, "Lehrer Browser", "Chrome, Firefox, Safari, Edge") {
+        Container(admin_ui, "Admin Panel", "React App")
+    }
+    
     Deployment_Node(vercel_edge, "Vercel Edge Network", "Global CDN") {
         Deployment_Node(vercel_infra, "Vercel Infrastructure") {
             Container(next_server, "Next.js Server", "Node.js Runtime", "Server-Side Rendering")
             Container(static_files, "Static Files", "HTML/CSS/JS", "Pre-rendered Pages")
-            Container(edge_funcs, "Edge Functions", "V8 Isolate", "Middleware & API Routes")
+            Container(api_routes, "API Routes", "Node.js Runtime", "Admin API Endpoints")
+            Container(edge_funcs, "Edge Functions", "V8 Isolate", "Middleware")
         }
     }
     
     Deployment_Node(apis, "External APIs") {
-        Container(contentful_api, "Contentful API", "REST", "CDN.contentful.com")
+        Container(contentful_delivery, "Contentful Delivery", "REST", "cdn.contentful.com")
+        Container(contentful_mgmt, "Contentful Management", "REST", "api.eu.contentful.com")
         Container(resend_api, "Resend API", "REST", "api.resend.com")
+        Container(telegram_api, "Telegram Bot API", "REST", "api.telegram.org")
     }
     
     Rel(browser, vercel_edge, "HTTPS Request", "443")
+    Rel(admin_ui, vercel_edge, "HTTPS Request", "443")
+    Rel(admin_ui, api_routes, "Admin API Calls", "Internal")
     Rel(vercel_edge, next_server, "Dynamic Routes", "Internal")
     Rel(vercel_edge, static_files, "Static Routes", "Cached")
-    Rel(next_server, contentful_api, "CMS API Calls", "HTTPS/443")
+    Rel(api_routes, contentful_mgmt, "CMS Write Operations", "HTTPS/443")
+    Rel(next_server, contentful_delivery, "CMS Read Operations", "HTTPS/443")
     Rel(edge_funcs, resend_api, "E-Mail API", "HTTPS/443")
+    Rel(api_routes, telegram_api, "Notifications", "HTTPS/443")
 ```
 
 ### Hosting-Details
@@ -482,6 +538,7 @@ C4Deployment
 - **Runtime**: Node.js (Serverless Functions)
 - **CDN**: Vercel Edge Network
 - **Region**: Auto (weltweite Verteilung)
+- **Contentful Region**: EU (api.eu.contentful.com)
 
 ### Build-Konfiguration
 
@@ -497,15 +554,22 @@ C4Deployment
 
 ### Environment Variables
 
-| Variable | Beschreibung |
-|----------|--------------|
-| `CONTENTFUL_SPACE_ID` | Contentful Space Identifier |
-| `CONTENTFUL_ACCESS_TOKEN` | Contentful API Access Token |
-| `RESEND_API_KEY` | Resend API Key für E-Mail Versand |
+| Variable | Beschreibung | Erforderlich für |
+|----------|--------------|------------------|
+| `CONTENTFUL_SPACE_ID` | Contentful Space Identifier | Website + Admin |
+| `CONTENTFUL_ACCESS_TOKEN` | Contentful Delivery API Token | Website (Lesen) |
+| `CONTENTFUL_MANAGEMENT_TOKEN` | Contentful Management API Token | Admin (Schreiben) |
+| `ADMIN_PASSWORD` | Passwort für Admin-Panel Login | Admin Panel |
+| `TELEGRAM_BOT_TOKEN` | Telegram Bot Token | Admin (optional) |
+| `TELEGRAM_CHAT_ID` | Telegram Chat ID für Benachrichtigungen | Admin (optional) |
+| `VERCEL_DEPLOY_HOOK_URL` | Vercel Deploy Hook URL | Admin (optional) |
+| `RESEND_API_KEY` | Resend API Key für E-Mail Versand | Kontaktformular |
 
 ---
 
 ## Seiten-Struktur
+
+### Public Routes
 
 | Route | Seite | Datenquelle | Besonderheiten |
 |-------|-------|-------------|----------------|
@@ -519,6 +583,46 @@ C4Deployment
 | `/impressum` | Impressum | Statisch | Rechtliche Informationen |
 | `/datenschutz` | Datenschutz | Statisch | DSGVO-Informationen |
 
+### Admin Routes
+
+| Route | Seite | Funktion | Zugriff |
+|-------|-------|----------|---------|
+| `/admin` | Login | Passwort-basierte Anmeldung | Öffentlich |
+| `/admin/dashboard` | Dashboard | Übersicht und Navigation | Authentifiziert |
+| `/admin/news` | News Liste | Alle News anzeigen + Löschen | Authentifiziert |
+| `/admin/news/new` | News erstellen | Neuer Artikel + Telegram Notification | Authentifiziert |
+| `/admin/galerie` | Galerie | Bilder hochladen & löschen | Authentifiziert |
+
+---
+
+## Admin-Panel Features
+
+### Funktionen
+
+| Feature | Beschreibung |
+|---------|-------------|
+| **Login** | Einfaches Passwort-Login mit 8h Cookie |
+| **News erstellen** | Formular mit Titel, Slug, Kategorie, Autor, Excerpt, Content |
+| **News löschen** | Mülleimer-Icon mit Bestätigungsdialog |
+| **Galerie Upload** | Drag & Drop Bilder-Upload (max. 5MB) |
+| **Galerie löschen** | X-Icon zum Entfernen von Bildern |
+| **Telegram Notifications** | Automatische Benachrichtigung bei neuen News |
+| **Auto-Deploy** | Automatisches Vercel Redeployment nach Änderungen |
+
+### Authentifizierung
+
+- **Methode**: Cookie-basiert
+- **Gültigkeit**: 8 Stunden
+- **Speicherung**: `admin_auth=true` Cookie
+- **Schutz**: Alle Admin-Routes prüfen Authentifizierung
+
+### Mobile-First Design
+
+- Optimiert für Smartphone und Tablet
+- Touch-freundliche Bedienelemente
+- Responsive Navigation
+- Große Buttons für einfache Bedienung
+
 ---
 
 ## Zusammenfassung
@@ -528,23 +632,27 @@ Die Astrid Lindgren Zentrum Website ist eine moderne, auf Next.js 14 basierende 
 ### Stärken
 - **SEO-optimiert** durch Server-Side Rendering
 - **Schnell** durch Static Site Generation und CDN
-- **CMS-gesteuert** durch Contentful Integration
+- **CMS-gesteuert** durch Contentful Integration (Read & Write)
 - **Responsive** durch Mobile-First Design mit Tailwind
 - **Accessible** durch Verwendung von Radix UI Primitives
 - **Performant** durch Optimierungen (Bilder, Fonts, Code-Splitting)
+- **Benutzerfreundlich** durch integriertes Admin-Panel für Lehrer
+- **Automatisiert** durch Telegram-Benachrichtigungen und Auto-Deploy
 
 ### Sicherheit
 - API Keys in Environment Variables
 - Keine sensiblen Daten im Client
 - HTTPS-only Kommunikation
+- Einfache aber effektive Cookie-Authentifizierung für Admin
 
 ### Skalierbarkeit
 - Serverless Architecture auf Vercel
 - CDN für statische Assets
 - CMS-basierte Content-Verwaltung
+- EU-Region für Contentful (DSGVO-konform)
 
 ---
 
 *Dokumentation erstellt nach C4 Modell Standards*
-*Version: 1.0*
+*Version: 2.0 (mit Admin-Panel)*
 *Datum: 2025*
