@@ -67,6 +67,20 @@ export type GalleryImage = {
   height?: number
 }
 
+export type JobEntry = {
+  id: string
+  title: string
+  department?: string
+  location?: string
+  type?: string
+  description?: string
+  requirements?: string[]
+  benefits?: string[]
+  contactEmail?: string
+  postedDate?: string
+  isActive: boolean
+}
+
 function mapNewsEntry(entry: any): NewsEntry | null {
   const fields = entry.fields as Record<string, any>
 
@@ -314,5 +328,87 @@ export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
   } catch (error: any) {
     console.error('Error fetching gallery images:', error)
     return []
+  }
+}
+
+function mapJobEntry(entry: any): JobEntry | null {
+  const fields = entry.fields as Record<string, any>
+
+  const title = fields.titel || fields.title || fields.jobTitle
+  const department = fields.abteilung || fields.department
+  const location = fields.standort || fields.location || 'Wien'
+  const type = fields.art || fields.type || fields.employmentType
+  let description = fields.beschreibung || fields.description || fields.jobDescription
+  const requirements = fields.anforderungen || fields.requirements || []
+  const benefits = fields.benefits || fields.vorteile || []
+  const contactEmail = fields.kontaktEmail || fields.contactEmail
+  const postedDate = fields.eingestelltAm || fields.postedDate || fields.date
+  const isActive = fields.aktiv !== false && fields.isActive !== false
+
+  if (!title) return null
+
+  // Extract simple text if description is a Rich Text object
+  if (description && typeof description === 'object' && description.nodeType === 'document') {
+    try {
+      description = description.content
+        .map((c: any) => c.content?.map((cc: any) => cc.value || '').join(''))
+        .join('\n')
+    } catch (e) {
+      description = ''
+    }
+  }
+
+  return {
+    id: entry.sys.id,
+    title,
+    department,
+    location,
+    type,
+    description: typeof description === 'string' ? description : undefined,
+    requirements: Array.isArray(requirements) ? requirements : [],
+    benefits: Array.isArray(benefits) ? benefits : [],
+    contactEmail,
+    postedDate,
+    isActive,
+  }
+}
+
+export async function getJobListings(): Promise<JobEntry[]> {
+  const contentTypes = ['stellenanzeige', 'jobPosting', 'job']
+
+  for (const contentType of contentTypes) {
+    try {
+      const entries = await contentfulClient.getEntries({
+        content_type: contentType,
+        limit: 50,
+      })
+
+      const mapped = entries.items.map(mapJobEntry).filter(Boolean) as JobEntry[]
+      if (mapped.length > 0) {
+        // Only return active jobs, sorted by posted date
+        return mapped
+          .filter(job => job.isActive)
+          .sort((a, b) => {
+            if (a.postedDate && b.postedDate) {
+              return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
+            }
+            return 0
+          })
+      }
+    } catch (error) {
+      console.error(`Error fetching job listings for ${contentType}:`, error)
+    }
+  }
+
+  return []
+}
+
+export async function getJobById(id: string): Promise<JobEntry | null> {
+  try {
+    const entry = await contentfulClient.getEntry(id)
+    return mapJobEntry(entry)
+  } catch (error) {
+    console.error(`Error fetching job ${id}:`, error)
+    return null
   }
 }

@@ -16,6 +16,7 @@ const navigation = [
   { name: 'News', href: '/news' },
   { name: 'Galerie', href: '/galerie' },
   { name: 'Fördern', href: '/foerdern' },
+  { name: 'Karriere', href: '/karriere' },
   { name: 'Kontakt', href: '/kontakt' },
 ]
 
