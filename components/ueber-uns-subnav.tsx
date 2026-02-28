@@ -36,7 +36,7 @@ export function UeberUnsSubnav({ showBackToTeam = false }: UeberUnsSubnavProps) 
   // Für Team-Detailseiten zeigen wir einen vereinfachten Navigationsbereich
   if (isTeamDetailPage || showBackToTeam) {
     return (
-      <div className="bg-white border-b border-primary/10 shadow-sm">
+      <div className="bg-white border-b border-primary/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-1 py-3 overflow-x-auto">
             <Link
@@ -60,7 +60,7 @@ export function UeberUnsSubnav({ showBackToTeam = false }: UeberUnsSubnavProps) 
             <div className="ml-auto">
               <Link
                 href="/ueber-uns#unser-team"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-sans font-semibold text-charcoal/70 hover:bg-primary/10 hover:text-primary transition-all whitespace-nowrap"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-sans font-semibold text-charcoal/70 hover:bg-primary/10 hover:text-primary whitespace-nowrap"
               >
                 Zurück zum Team
               </Link>
@@ -72,7 +72,7 @@ export function UeberUnsSubnav({ showBackToTeam = false }: UeberUnsSubnavProps) 
   }
 
   return (
-    <div className="bg-white border-b border-primary/10 shadow-sm">
+    <div className="bg-white border-b border-primary/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <nav className="flex items-center gap-1 py-3 overflow-x-auto">
           <Link
@@ -93,9 +93,9 @@ export function UeberUnsSubnav({ showBackToTeam = false }: UeberUnsSubnavProps) 
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-sans font-semibold transition-all whitespace-nowrap',
+                    'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-sans font-semibold whitespace-nowrap',
                     isActive
-                      ? 'bg-primary text-white shadow-md'
+                      ? 'bg-primary text-white'
                       : 'text-charcoal/70 hover:bg-primary/10 hover:text-primary'
                   )}
                 >

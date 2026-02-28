@@ -31,10 +31,10 @@ export function ScrollToTopButton() {
     <button
       onClick={scrollToTop}
       className={cn(
-        'fixed bottom-8 right-8 z-40 p-3 rounded-full bg-primary text-cream shadow-lg transition-all duration-300 hover:bg-primary/90 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+        'fixed bottom-8 right-8 z-40 p-3 rounded-full bg-primary text-cream shadow-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
         isVisible 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-10 pointer-events-none'
+          ? 'opacity-100' 
+          : 'opacity-0 pointer-events-none'
       )}
       aria-label="Nach oben scrollen"
     >
