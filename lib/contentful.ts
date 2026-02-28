@@ -66,6 +66,7 @@ export type JobEntry = {
   location?: string
   type?: string
   description?: string
+  descriptionRichText?: any // Contentful RichText Document für formatierte Darstellung
   requirements?: string[]
   benefits?: string[]
   contactEmail?: string
@@ -330,6 +331,35 @@ export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
   }
 }
 
+function extractRichTextContent(richText: any): string {
+  if (!richText || typeof richText !== 'object') return ''
+  if (richText.nodeType !== 'document') return String(richText)
+  
+  try {
+    const extractNodes = (nodes: any[]): string => {
+      return nodes.map((node: any) => {
+        if (node.nodeType === 'text') {
+          return node.value || ''
+        }
+        if (node.content && Array.isArray(node.content)) {
+          const content = extractNodes(node.content)
+          // Füge Zeilenumbrüche für bestimmte Block-Typen hinzu
+          if (['paragraph', 'list-item', 'heading-1', 'heading-2', 'heading-3'].includes(node.nodeType)) {
+            return content + '\n'
+          }
+          return content
+        }
+        return ''
+      }).join('')
+    }
+    
+    return extractNodes(richText.content).trim()
+  } catch (e) {
+    console.warn('Error extracting rich text content:', e)
+    return ''
+  }
+}
+
 function mapJobEntry(entry: any): JobEntry | null {
   const fields = entry.fields as Record<string, any>
 
@@ -338,7 +368,29 @@ function mapJobEntry(entry: any): JobEntry | null {
   const department = fields.abteilung || fields.department
   const location = fields.standort || fields.location || 'Wien'
   const type = fields.art || fields.type || fields.employmentType
-  let description = fields.beschreibung || fields.description || fields.jobDescription || fields.beschreibungKurz
+  
+  // Beschreibung: Zuerst versuchen wir die lange Beschreibung (RichText), dann kurz
+  let description: string | undefined
+  let descriptionRichText: any = undefined
+  
+  // Speichere das RichText-Objekt für formatierte Darstellung
+  if (fields.beschreibungLang && typeof fields.beschreibungLang === 'object') {
+    descriptionRichText = fields.beschreibungLang
+    description = extractRichTextContent(fields.beschreibungLang)
+  }
+  if (!description && fields.beschreibungKurz) {
+    description = fields.beschreibungKurz
+  }
+  if (!description) {
+    const rawDesc = fields.beschreibung || fields.description || fields.jobDescription
+    if (typeof rawDesc === 'object' && rawDesc !== null) {
+      descriptionRichText = rawDesc
+      description = extractRichTextContent(rawDesc)
+    } else {
+      description = rawDesc
+    }
+  }
+  
   const requirements = fields.anforderungen || fields.requirements || []
   const benefits = fields.benefits || fields.vorteile || []
   const contactEmail = fields.kontaktEmail || fields.contactEmail
@@ -348,17 +400,6 @@ function mapJobEntry(entry: any): JobEntry | null {
 
   if (!title) return null
 
-  // Extract simple text if description is a Rich Text object
-  if (description && typeof description === 'object' && description.nodeType === 'document') {
-    try {
-      description = description.content
-        .map((c: any) => c.content?.map((cc: any) => cc.value || '').join(''))
-        .join('\n')
-    } catch (e) {
-      description = ''
-    }
-  }
-
   return {
     id: entry.sys.id,
     title,
@@ -366,6 +407,7 @@ function mapJobEntry(entry: any): JobEntry | null {
     location,
     type,
     description: typeof description === 'string' ? description : undefined,
+    descriptionRichText,
     requirements: Array.isArray(requirements) ? requirements : [],
     benefits: Array.isArray(benefits) ? benefits : [],
     contactEmail,

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, MapPin, Clock, Briefcase, CheckCircle, Mail } from 'lucide-react'
 import { getJobById, getJobListings } from '@/lib/contentful'
 import { notFound } from 'next/navigation'
+import { renderRichText } from '@/components/rich-text-renderer'
 
 interface Props {
   params: Promise<{
@@ -84,13 +85,17 @@ export default async function JobDetailPage({ params }: Props) {
             )}
           </div>
 
-          {job.description && (
+          {(job.descriptionRichText || job.description) && (
             <div className="mt-8">
               <h2 className="font-sans text-xl font-bold text-charcoal mb-4">
                 Über die Position
               </h2>
-              <div className="font-serif text-lg text-charcoal/70 whitespace-pre-wrap leading-relaxed">
-                {job.description}
+              <div className="font-serif text-lg text-charcoal/70 leading-relaxed">
+                {job.descriptionRichText ? (
+                  renderRichText(job.descriptionRichText)
+                ) : (
+                  <div className="whitespace-pre-wrap">{job.description}</div>
+                )}
               </div>
             </div>
           )}
