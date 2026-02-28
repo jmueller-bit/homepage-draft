@@ -17,7 +17,16 @@ interface NavItem {
 
 const navigation: NavItem[] = [
   { name: 'Startseite', href: '/' },
-  { name: 'Über uns', href: '/ueber-uns' },
+  {
+    name: 'Über uns',
+    href: '/ueber-uns',
+    children: [
+      { name: 'Übersicht', href: '/ueber-uns' },
+      { name: 'Pädagogisches Konzept', href: '/ueber-uns#paedagogisches-konzept' },
+      { name: 'Philosophie', href: '/ueber-uns#philosophie' },
+      { name: 'Unser Team', href: '/ueber-uns#unser-team' },
+    ],
+  },
   {
     name: 'Schule',
     href: '/schule',
