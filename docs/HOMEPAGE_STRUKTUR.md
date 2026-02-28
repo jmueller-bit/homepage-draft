@@ -52,7 +52,9 @@ app/
 │       └── page.tsx                  # News Detailseite ✓
 │
 ├── schule/
-│   └── page.tsx                      # Schule Übersicht ✓
+│   ├── page.tsx                      # Schule Übersicht ✓
+│   └── anmeldung/
+│       └── page.tsx                  # Anmeldung ✓
 │
 └── ueber-uns/
     ├── page.tsx                      # Über uns ✓
@@ -84,6 +86,10 @@ components/
 ├── footer.tsx                        # Footer ✓
 ├── home-page.tsx                     # Startseite Komponenten ✓
 ├── navbar.tsx                        # Hauptnavigation ✓
+├── school-subnav.tsx                 # Schule Subnavigation ✓
+├── news-subnav.tsx                   # News Subnavigation ✓
+├── ueber-uns-subnav.tsx              # Über uns Subnavigation ✓
+├── scroll-to-top.tsx                 # Scroll to Top Button ✓
 └── ui-provider.tsx                   # UI Provider ✓
 ```
 
@@ -97,10 +103,18 @@ lib/
 
 ## Navigation (Navbar)
 
+### Hauptnavigation mit Dropdown-Menüs
+
 ```
 Startseite → /
 Über uns → /ueber-uns
+  ├─ Übersicht → /ueber-uns
+  ├─ Pädagogisches Konzept → /ueber-uns#paedagogisches-konzept
+  ├─ Philosophie → /ueber-uns#philosophie
+  └─ Unser Team → /ueber-uns#unser-team
 Schule → /schule
+  ├─ Übersicht → /schule
+  └─ Anmeldung → /schule/anmeldung
 News → /news
 Galerie → /galerie
 Fördern → /foerdern
@@ -121,43 +135,37 @@ Kontakt → /kontakt
 
 ### 🔴 Kritisch (Sollte priorisiert werden)
 
-1. **/anmeldung** - Anmeldeinformationen für neue Schüler
-   - Anmeldeformular
-   - Aufnahmekriterien
-   - Termine
-   - Benötigte Unterlagen
-
-2. **/termine** - Schuljahreskalender
+1. **/termine** - Schuljahreskalender
    - Schulferien
    - Veranstaltungen
    - Elternabende
    - Projektwochen
 
-3. **/schulordnung** - Regeln und Richtlinien
+2. **/schulordnung** - Regeln und Richtlinien
    - Hausordnung
    - Schulordnung PDF
    - Verhaltensregeln
 
-### 🟡 Wichtig (Erweitert die Funktionalität)
-
-4. **/eltern** - Elternbereich
+3. **/eltern** - Elternbereich
    - Elternvertretung
    - Termine
    - Wichtige Informationen
    - Download-Bereich
 
-5. **/downloads** - Download-Center
+### 🟡 Wichtig (Erweitert die Funktionalität)
+
+4. **/downloads** - Download-Center
    - Anmeldeformulare
    - Schulordnung
    - Informationsblätter
    - Flyer
 
-6. **/kosten** - Schulgeld und Kosten
+5. **/kosten** - Schulgeld und Kosten
    - Schulgeld-Informationen
    - Zahlungsmodalitäten
    - Fördermöglichkeiten
 
-7. **/schulweg** - Anfahrt und Lageplan
+6. **/schulweg** - Anfahrt und Lageplan
    - Öffentliche Verkehrsmittel
    - Parkmöglichkeiten
    - Lageplan
@@ -221,13 +229,12 @@ Kontakt → /kontakt
 
 ## Empfohlene Reihenfolge für fehlende Seiten
 
-1. **/anmeldung** - Wichtig für Neuanmeldungen
-2. **/termine** - Oft nachgefragt
-3. **/downloads** - Praktisch für Dokumente
-4. **/schulordnung** - Rechtlich relevant
-5. **/eltern** - Elternbindung
-6. **/kosten** - Transparenz
-7. **/schulweg** - Praktische Info
+1. **/termine** - Oft nachgefragt
+2. **/downloads** - Praktisch für Dokumente
+3. **/schulordnung** - Rechtlich relevant
+4. **/eltern** - Elternbindung
+5. **/kosten** - Transparenz
+6. **/schulweg** - Praktische Info
 
 ## Content-Management Checkliste
 

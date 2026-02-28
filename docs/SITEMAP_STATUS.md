@@ -5,13 +5,13 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    VORHANDENE SEITEN                         │
-│                        ✅ (16 Seiten)                         │
+│                        ✅ (17 Seiten)                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  🏠 Öffentliche Seiten:                                      │
 │  ├── ✅ /                    Startseite                      │
 │  ├── ✅ /ueber-uns           Über uns + Team                 │
-│  ├── ✅ /schule              Schule Übersicht                │
+│  ├── ✅ /schule              Schule Übersicht + Anmeldung    │
 │  ├── ✅ /news                News Übersicht + Detail         │
 │  ├── ✅ /galerie             Galerie                        │
 │  ├── ✅ /foerdern            Fördern & Spenden              │
@@ -30,16 +30,15 @@
 
 ┌─────────────────────────────────────────────────────────────┐
 │                    FEHLENDE SEITEN                           │
-│                        ❌ (12 Seiten)                         │
+│                        ❌ (11 Seiten)                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  🔴 KRITISCH (Priorität 1):                                  │
-│  ├── ❌ /anmeldung           Anmeldung neue Schüler          │
 │  ├── ❌ /termine             Schuljahreskalender            │
-│  └── ❌ /schulordnung        Schulordnung & Regeln          │
+│  ├── ❌ /schulordnung        Schulordnung & Regeln          │
+│  └── ❌ /eltern              Elternbereich                  │
 │                                                              │
 │  🟡 WICHTIG (Priorität 2):                                   │
-│  ├── ❌ /eltern              Elternbereich                  │
 │  ├── ❌ /downloads           Download-Center                │
 │  ├── ❌ /kosten              Schulgeld & Kosten             │
 │  └── ❌ /schulweg            Anfahrt & Lageplan             │
@@ -60,7 +59,7 @@
 |-------|--------|------------|-----|--------|-----------|
 | Startseite | ✅ | ❌ | ✅ | ✅ | - |
 | Über uns | ✅ | ✅ Team | ✅ | ✅ | - |
-| Schule | ✅ | ❌ | ✅ | ✅ | - |
+| Schule | ✅ | ✅ Anmeldung | ✅ | ✅ | - |
 | News | ✅ | ✅ | ✅ | ✅ | - |
 | Galerie | ✅ | ✅ | ✅ | ✅ | - |
 | Fördern | ✅ | ❌ | ✅ | ✅ | - |
@@ -68,10 +67,9 @@
 | Kontakt | ✅ | ❌ | ✅ | ✅ | - |
 | Impressum | ✅ | ❌ | ✅ | ✅ | - |
 | Datenschutz | ✅ | ❌ | ✅ | ✅ | - |
-| Anmeldung | ❌ | ❌ | ❌ | ❌ | 🔴 P1 |
 | Termine | ❌ | ❌ | ❌ | ❌ | 🔴 P1 |
 | Schulordnung | ❌ | ❌ | ❌ | ❌ | 🔴 P1 |
-| Eltern | ❌ | ❌ | ❌ | ❌ | 🟡 P2 |
+| Eltern | ❌ | ❌ | ❌ | ❌ | 🔴 P1 |
 | Downloads | ❌ | ❌ | ❌ | ❌ | 🟡 P2 |
 | Kosten | ❌ | ❌ | ❌ | ❌ | 🟡 P2 |
 | Schulweg | ❌ | ❌ | ❌ | ❌ | 🟡 P2 |
@@ -81,9 +79,15 @@
 ```
 Hauptnavigation:
 ├─ Startseite
-├─ Über uns
-│  └─ Teammitglieder (Detailseiten)
-├─ Schule
+├─ Über uns (Dropdown)
+│  ├─ Übersicht
+│  ├─ Pädagogisches Konzept
+│  ├─ Philosophie
+│  └─ Unser Team
+│     └─ Teammitglieder (Detailseiten)
+├─ Schule (Dropdown)
+│  ├─ Übersicht
+│  └─ Anmeldung
 ├─ News
 │  └─ News-Artikel (Detailseiten)
 ├─ Galerie
@@ -110,29 +114,29 @@ Footer:
 ## Empfohlene Implementierungs-Reihenfolge
 
 ### Phase 1: Kritische Seiten (Woche 1)
-1. `/anmeldung` - Formular + Informationen
-2. `/termine` - Kalender-Übersicht
-3. `/schulordnung` - PDF-Downloads
+1. `/termine` - Kalender-Übersicht
+2. `/schulordnung` - PDF-Downloads
+3. `/eltern` - Elternportal
 
 ### Phase 2: Wichtige Seiten (Woche 2)
 4. `/downloads` - Download-Center
-5. `/eltern` - Elternportal
-6. `/kosten` - Preisübersicht
-7. `/schulweg` - Anfahrt
+5. `/kosten` - Preisübersicht
+6. `/schulweg` - Anfahrt
 
 ### Phase 3: Optionale Erweiterungen (Woche 3-4)
-8. `/geschichte` - Schulgeschichte
-9. `/presse` - Pressebereich
-10. `/partner` - Partnerschaften
-11. Weitere nach Bedarf
+7. `/geschichte` - Schulgeschichte
+8. `/presse` - Pressebereich
+9. `/partner` - Partnerschaften
+10. Weitere nach Bedarf
 
 ## Technische Quick-Wins
 
 - [ ] Sitemap automatisch generieren
-- [ ] Cookie-Banner hinzufügen
-- [ ] 404-Seite designen
+- [x] Cookie-Banner hinzufügen
+- [x] 404-Seite designen
 - [ ] Lade-Animationen
-- [ ] Scroll-to-Top Button
+- [x] Scroll-to-Top Button
+- [x] Dropdown-Menüs implementiert
 
 ## Content-Plan
 
@@ -143,7 +147,7 @@ Footer:
 - [ ] Stellenanzeige erstellen (falls vorhanden)
 
 ### Inhaltlich vorbereiten:
-- [ ] Anmeldeformular PDF
+- [x] Anmeldeformular PDF
 - [ ] Schulordnung PDF
 - [ ] Schuljahreskalender
 - [ ] Flyer/Broschüren
@@ -152,19 +156,20 @@ Footer:
 ## Zusammenfassung
 
 **Aktueller Stand:**
-- ✅ 16 Seiten implementiert
+- ✅ 17 Seiten implementiert
+- ✅ Dropdown-Menüs für Über uns & Schule
 - ✅ Contentful-Integration aktiv
 - ✅ Responsive Design
 - ✅ Moderne Technologie (Next.js 14)
 
 **Fehlt noch:**
-- ❌ 12 Seiten (davon 3 kritisch)
+- ❌ 11 Seiten (davon 3 kritisch)
 - ❌ Echter Content in Contentful
 - ❌ SEO-Feinjustierung
 - ❌ Performance-Optimierung
 
 **Geschätzter Aufwand für fehlende Seiten:**
 - Phase 1 (Kritisch): ~2-3 Tage
-- Phase 2 (Wichtig): ~3-4 Tage  
+- Phase 2 (Wichtig): ~2-3 Tage  
 - Phase 3 (Optional): ~5-7 Tage
-- **Gesamt: ~10-14 Tage**
+- **Gesamt: ~9-13 Tage**
