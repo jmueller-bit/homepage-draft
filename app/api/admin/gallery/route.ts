@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!.trim())
     const environment = await space.getEnvironment('master')
 
     // Upload Asset zu Contentful
@@ -149,7 +149,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!.trim())
     const environment = await space.getEnvironment('master')
 
     // Entry unpublizieren und löschen

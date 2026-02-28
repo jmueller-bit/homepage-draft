@@ -1,8 +1,18 @@
-// Einfache Authentifizierung für Lehrer
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'alz2024'
+// Client-seitige Authentifizierung für Lehrer
+// Passwort-Validierung erfolgt serverseitig über API
 
-export function validatePassword(password: string): boolean {
-  return password === ADMIN_PASSWORD
+export async function validatePassword(password: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/admin/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    })
+    return response.ok
+  } catch (error) {
+    console.error('Auth error:', error)
+    return false
+  }
 }
 
 export function setAuthCookie() {

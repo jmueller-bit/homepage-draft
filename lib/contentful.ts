@@ -7,12 +7,13 @@ export const SCHULE_EVENT_CONTENT_TYPE = 'schuleEvent'
 
 // Delivery Client (read-only, für öffentliche Website)
 export const contentfulClient = createClient({
-  space: process.env.CONTENTFUL_SPACE_ID || 'TODO',
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'TODO',
+  space: (process.env.CONTENTFUL_SPACE_ID || 'TODO').trim(),
+  accessToken: (process.env.CONTENTFUL_ACCESS_TOKEN || 'TODO').trim(),
 })
 
 // Validate that environment variables are actually present at runtime
-if (process.env.CONTENTFUL_SPACE_ID === 'TODO' || !process.env.CONTENTFUL_SPACE_ID) {
+const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+if (!spaceId || spaceId === 'TODO') {
   console.warn('⚠️ WARNING: CONTENTFUL_SPACE_ID is not set in environment variables! Contentful API will fail.');
 }
 
@@ -111,7 +112,8 @@ function mapNewsEntry(entry: any): NewsEntry | null {
 }
 
 export async function getNews(limit = 10, category?: string): Promise<NewsEntry[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     return [{
       id: 'env-error',
       title: '🚨 Server-Fehler: Contentful Variablen fehlen',
@@ -165,7 +167,8 @@ export async function getNewsBySlug(slug: string): Promise<NewsEntry | null> {
 }
 
 export async function getLatestNews(count: number = 3): Promise<NewsEntry[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     return [{
       id: 'env-error',
       title: '🚨 Server-Fehler: Contentful Variablen fehlen',
@@ -348,7 +351,8 @@ export async function getTeamMemberById(id: string): Promise<TeamEntry | null> {
 }
 
 export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     console.warn('⚠️ Gallery: CONTENTFUL_SPACE_ID not set, returning empty array')
     return []
   }
@@ -475,7 +479,8 @@ export async function getJobById(id: string): Promise<JobEntry | null> {
 
 // Neue Funktionen für Schule-Galerie Content-Typen
 export async function getSchuleAllgemeinImages(limit = 50): Promise<GalleryImage[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     console.warn('⚠️ Schule Allgemein: CONTENTFUL_SPACE_ID not set, returning empty array')
     return []
   }
@@ -498,7 +503,8 @@ export async function getSchuleAllgemeinImages(limit = 50): Promise<GalleryImage
 }
 
 export async function getSchuleEventImages(limit = 50): Promise<GalleryImage[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     console.warn('⚠️ Schule Events: CONTENTFUL_SPACE_ID not set, returning empty array')
     return []
   }
@@ -522,7 +528,8 @@ export async function getSchuleEventImages(limit = 50): Promise<GalleryImage[]> 
 
 // Kombinierte Funktion für Galerie mit Filter
 export async function getGalleryImagesByCategory(category: 'unterricht' | 'events' | 'sport' | 'all' = 'all', limit = 50): Promise<GalleryImage[]> {
-  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim();
+  if (!spaceId || spaceId === 'TODO') {
     console.warn('⚠️ Gallery: CONTENTFUL_SPACE_ID not set, returning empty array')
     return []
   }

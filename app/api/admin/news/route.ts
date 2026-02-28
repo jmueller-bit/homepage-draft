@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!.trim())
     const environment = await space.getEnvironment('master')
 
     // Prüfe ob slug bereits existiert
@@ -144,7 +144,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!)
+    const space = await managementClient.getSpace(process.env.CONTENTFUL_SPACE_ID!.trim())
     const environment = await space.getEnvironment('master')
 
     // Entry holen

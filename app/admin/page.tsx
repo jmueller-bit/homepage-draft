@@ -16,14 +16,15 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
     // Kleine Verzögerung für besseres UX
-    setTimeout(() => {
-      if (validatePassword(password)) {
+    setTimeout(async () => {
+      const isValid = await validatePassword(password)
+      if (isValid) {
         setAuthCookie()
         router.push('/admin/dashboard')
       } else {
