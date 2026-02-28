@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft, Mail } from 'lucide-react'
 import { getTeamMemberById, getTeamMembers } from '@/lib/contentful'
 import { notFound } from 'next/navigation'
+import { renderRichText } from '@/components/rich-text-renderer'
 
 interface Props {
   params: Promise<{
@@ -88,13 +89,17 @@ export default async function TeamMemberPage({ params }: Props) {
                 {member.role}
               </p>
               
-              {member.bio && (
+              {(member.bioRichText || member.bio) && (
                 <div className="mt-8">
                   <h2 className="font-sans text-lg font-bold text-charcoal mb-4">
                     Über mich
                   </h2>
-                  <div className="font-serif text-lg text-charcoal/70 whitespace-pre-wrap leading-relaxed">
-                    {member.bio}
+                  <div className="font-serif text-lg text-charcoal/70 leading-relaxed">
+                    {member.bioRichText ? (
+                      renderRichText(member.bioRichText)
+                    ) : (
+                      <div className="whitespace-pre-wrap">{member.bio}</div>
+                    )}
                   </div>
                 </div>
               )}

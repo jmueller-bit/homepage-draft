@@ -36,6 +36,7 @@ export type TeamEntry = {
   name: string
   role: string
   bio?: string
+  bioRichText?: any // Contentful RichText Document für formatierte Darstellung
   order?: number
   photo?: {
     url: string
@@ -187,27 +188,58 @@ export async function getLatestNews(count: number = 3): Promise<NewsEntry[]> {
   }
 }
 
+function extractRichTextContent(richText: any): string {
+  if (!richText || typeof richText !== 'object') return ''
+  if (richText.nodeType !== 'document') return String(richText)
+  
+  try {
+    const extractNodes = (nodes: any[]): string => {
+      return nodes.map((node: any) => {
+        if (node.nodeType === 'text') {
+          return node.value || ''
+        }
+        if (node.content && Array.isArray(node.content)) {
+          const content = extractNodes(node.content)
+          // Füge Zeilenumbrüche für bestimmte Block-Typen hinzu
+          if (['paragraph', 'list-item', 'heading-1', 'heading-2', 'heading-3'].includes(node.nodeType)) {
+            return content + '\n'
+          }
+          return content
+        }
+        return ''
+      }).join('')
+    }
+    
+    return extractNodes(richText.content).trim()
+  } catch (e) {
+    console.warn('Error extracting rich text content:', e)
+    return ''
+  }
+}
+
 function mapTeamEntry(entry: any): TeamEntry | null {
   const fields = entry.fields as Record<string, any>
 
   const name = fields.name || fields.titel || fields.vorname || fields.fullName
   const role = fields.funktion || fields.role || fields.rolle || fields.position
-  let bio = fields.bio || fields.beschreibung || fields.text
+  
+  // Bio kann RichText oder plain text sein
+  let bio: string | undefined
+  let bioRichText: any = undefined
+  const rawBio = fields.bio || fields.beschreibung || fields.text
+  
+  if (typeof rawBio === 'object' && rawBio !== null && rawBio.nodeType === 'document') {
+    // RichText - speichere das Objekt für formatierte Darstellung
+    bioRichText = rawBio
+    bio = extractRichTextContent(rawBio)
+  } else if (typeof rawBio === 'string') {
+    bio = rawBio
+  }
+  
   const order = fields.order ?? fields.reihenfolge
   const photoAsset = fields.photo || fields.foto || fields.bild
 
   if (!name || !role) return null
-
-  // Extract simple text if bio is a Rich Text object
-  if (bio && typeof bio === 'object' && bio.nodeType === 'document') {
-    try {
-      bio = bio.content
-        .map((c: any) => c.content?.map((cc: any) => cc.value || '').join(''))
-        .join('\n')
-    } catch (e) {
-      bio = ''
-    }
-  }
 
   const photoFile = photoAsset?.fields?.file
 
@@ -215,7 +247,8 @@ function mapTeamEntry(entry: any): TeamEntry | null {
     id: entry.sys.id,
     name,
     role,
-    bio: typeof bio === 'string' ? bio : undefined,
+    bio,
+    bioRichText,
     order: typeof order === 'number' ? order : undefined,
     photo: photoFile
       ? {
@@ -328,35 +361,6 @@ export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
   } catch (error: any) {
     console.error('Error fetching gallery images:', error)
     return []
-  }
-}
-
-function extractRichTextContent(richText: any): string {
-  if (!richText || typeof richText !== 'object') return ''
-  if (richText.nodeType !== 'document') return String(richText)
-  
-  try {
-    const extractNodes = (nodes: any[]): string => {
-      return nodes.map((node: any) => {
-        if (node.nodeType === 'text') {
-          return node.value || ''
-        }
-        if (node.content && Array.isArray(node.content)) {
-          const content = extractNodes(node.content)
-          // Füge Zeilenumbrüche für bestimmte Block-Typen hinzu
-          if (['paragraph', 'list-item', 'heading-1', 'heading-2', 'heading-3'].includes(node.nodeType)) {
-            return content + '\n'
-          }
-          return content
-        }
-        return ''
-      }).join('')
-    }
-    
-    return extractNodes(richText.content).trim()
-  } catch (e) {
-    console.warn('Error extracting rich text content:', e)
-    return ''
   }
 }
 
