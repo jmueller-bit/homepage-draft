@@ -44,28 +44,28 @@ function renderNode(node: RichTextNode, index: number): React.ReactNode {
 
     case 'heading-1':
       return (
-        <h1 key={key} className="text-3xl font-bold mb-4 mt-6">
+        <h1 key={key} className="text-3xl font-bold mb-4 mt-6 text-primary">
           {node.content?.map((child, i) => renderInlineNode(child, i))}
         </h1>
       )
 
     case 'heading-2':
       return (
-        <h2 key={key} className="text-2xl font-bold mb-3 mt-5">
+        <h2 key={key} className="text-2xl font-bold mb-3 mt-5 text-secondary">
           {node.content?.map((child, i) => renderInlineNode(child, i))}
         </h2>
       )
 
     case 'heading-3':
       return (
-        <h3 key={key} className="text-xl font-bold mb-2 mt-4">
+        <h3 key={key} className="text-xl font-bold mb-2 mt-4 text-accent">
           {node.content?.map((child, i) => renderInlineNode(child, i))}
         </h3>
       )
 
     case 'heading-4':
       return (
-        <h4 key={key} className="text-lg font-bold mb-2 mt-3">
+        <h4 key={key} className="text-lg font-bold mb-2 mt-3 text-primary/80">
           {node.content?.map((child, i) => renderInlineNode(child, i))}
         </h4>
       )
