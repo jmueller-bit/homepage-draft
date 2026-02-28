@@ -68,8 +68,8 @@ export default function KontaktClient() {
     })
   }
 
-  const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${MAP_COORDS.bbox}&layer=mapnik&marker=${MAP_COORDS.marker}`
-  const mapExternalUrl = `https://www.openstreetmap.org/?mlat=${MAP_COORDS.lat}&mlon=${MAP_COORDS.lng}#map=17/${MAP_COORDS.lat}/${MAP_COORDS.lng}`
+  // Google Maps Embed URL
+  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2693.627123456789!2d16.285417!3d48.140625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d000000000000%3A0x0!2sBreitenfurter%20Stra%C3%9Fe%20401-413%2F1%2FR02%2C%201230%20Wien!5e0!3m2!1sde!2sat!4v1234567890000!5m2!1sde!2sat`
   const googleMapsUrl = 'https://maps.app.goo.gl/RjBZcY1Tx31joX1e8'
 
   return (
@@ -292,15 +292,6 @@ export default function KontaktClient() {
               >
                 <ExternalLink className="h-4 w-4" />
                 In Google Maps öffnen
-              </a>
-              <a
-                href={mapExternalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-sans text-sm"
-              >
-                <ExternalLink className="h-4 w-4" />
-                In OpenStreetMap öffnen
               </a>
             </div>
           </div>

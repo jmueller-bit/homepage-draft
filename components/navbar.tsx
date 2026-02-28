@@ -33,9 +33,9 @@ export function Navbar() {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Hauptnavigation">
         <div className="flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center gap-3" aria-label="Astrid Lindgren Zentrum Startseite">
-            <div className="relative h-12 w-[46px] flex-shrink-0">
+            <div className="relative h-12 w-12 flex-shrink-0">
               <Image
-                src="/ALZ_Logo_Header_Retina.png"
+                src="/images/logos/alz-logo.png"
                 alt="ALZ Logo"
                 fill
                 className="object-contain"

@@ -12,7 +12,7 @@ export function OrganizationSchema({ type = 'EducationalOrganization' }: Organiz
     alternateName: 'ALZ',
     description: 'Eine moderne Privatschule in Wien mit ganzheitlichem Bildungskonzept',
     url: 'https://alz5.thesolution.at',
-    logo: 'https://alz5.thesolution.at/ALZ_Logo_Header_Retina.png',
+    logo: 'https://alz5.thesolution.at/images/logos/alz-logo.png',
     image: 'https://alz5.thesolution.at/og-image.svg',
     address: {
       '@type': 'PostalAddress',
@@ -123,7 +123,7 @@ export function ArticleSchema({
       name: 'Astrid Lindgren Zentrum',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://alz5.thesolution.at/ALZ_Logo_Header_Retina.png',
+        url: 'https://alz5.thesolution.at/images/logos/alz-logo.png',
       },
     },
     mainEntityOfPage: {
@@ -202,7 +202,7 @@ export function JobPostingSchema({
       '@type': 'Organization',
       name: 'Astrid Lindgren Zentrum',
       sameAs: 'https://alz5.thesolution.at',
-      logo: 'https://alz5.thesolution.at/ALZ_Logo_Header_Retina.png',
+      logo: 'https://alz5.thesolution.at/images/logos/alz-logo.png',
     },
     jobLocation: {
       '@type': 'Place',
