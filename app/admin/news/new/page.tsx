@@ -92,6 +92,7 @@ export default function NewNewsPage() {
     try {
       let imageUrl = formData.imageUrl
 
+<<<<<<< HEAD
       // 🖼️ Bild zuerst hochladen wenn vorhanden (Vercel Blob)
       if (imageFile) {
         const uploadRes = await fetch(
@@ -108,12 +109,32 @@ export default function NewNewsPage() {
         } else {
           const errData = await uploadRes.json()
           setError(errData.error || 'Bild-Upload fehlgeschlagen')
+=======
+      // 🖼️ Bild zuerst hochladen wenn vorhanden
+      if (imageFile) {
+        const imageData = new FormData()
+        imageData.append('file', imageFile)
+
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: imageData,
+        })
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json()
+          imageUrl = uploadData.url
+        } else {
+          setError('Bild-Upload fehlgeschlagen')
+>>>>>>> 370a3e4b7da34fd1001e072a67d261b449b62e78
           setIsSubmitting(false)
           return
         }
       }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 370a3e4b7da34fd1001e072a67d261b449b62e78
       const response = await fetch('/api/admin/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
