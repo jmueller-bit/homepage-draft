@@ -383,6 +383,12 @@ export async function getJobListings(): Promise<JobEntry[]> {
           })
       }
     } catch (error) {
+      // Check if error is due to unknown content type
+      const err = error as any
+      if (err?.name === 'unknownContentType') {
+        // Content type doesn't exist, try the next one
+        continue
+      }
       console.error(`Error fetching job listings for ${contentType}:`, error)
     }
   }

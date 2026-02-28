@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Home, Search, ArrowLeft } from 'lucide-react'
+import { Home, Search } from 'lucide-react'
 
 export default function NotFoundPage() {
   return (
@@ -42,17 +42,6 @@ export default function NotFoundPage() {
               Kontakt aufnehmen
             </Link>
           </Button>
-        </div>
-
-        {/* Back Button */}
-        <div className="mt-8">
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center gap-2 font-sans font-semibold text-charcoal/60 hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Zurück zur vorherigen Seite
-          </button>
         </div>
 
         {/* Suggestions */}
