@@ -9,6 +9,10 @@ export async function POST(request: Request): Promise<NextResponse> {
         return NextResponse.json({ error: 'Kein Dateiname' }, { status: 400 });
     }
 
+    if (!request.body) {
+        return NextResponse.json({ error: 'Kein Inhalt' }, { status: 400 });
+    }
+
     const blob = await put(`news/${filename}`, request.body, {
         access: 'public',
     });
