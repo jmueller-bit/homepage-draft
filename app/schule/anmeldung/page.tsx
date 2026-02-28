@@ -16,6 +16,8 @@ import {
   School
 } from 'lucide-react'
 import { SchoolSubnav } from '@/components/school-subnav'
+import { Breadcrumbs } from '@/components/breadcrumbs'
+import { BreadcrumbSchema } from '@/components/seo/json-ld-schema'
 
 export const metadata: Metadata = {
   title: 'Anmeldung',
@@ -77,9 +79,26 @@ const infoEvents = [
 ]
 
 export default function AnmeldungPage() {
+  const baseUrl = 'https://alz5.thesolution.at'
+  
   return (
     <>
+      <BreadcrumbSchema
+        items={[
+          { name: 'Startseite', item: baseUrl },
+          { name: 'Schule', item: `${baseUrl}/schule` },
+          { name: 'Anmeldung', item: `${baseUrl}/schule/anmeldung` },
+        ]}
+      />
       <SchoolSubnav />
+      <div className="bg-cream">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Breadcrumbs items={[
+            { label: 'Schule', href: '/schule' },
+            { label: 'Anmeldung' },
+          ]} />
+        </div>
+      </div>
       
       {/* Hero Section */}
       <section className="bg-schule py-16 sm:py-24">

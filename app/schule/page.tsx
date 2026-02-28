@@ -9,6 +9,9 @@ import { School, ArrowRight } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Schule',
   description: 'Alle Schulstufen von der Vorschule bis zur 9. Klasse. Erfahren Sie mehr über unser Bildungsangebot und den Tagesablauf.',
+  alternates: {
+    canonical: 'https://alz5.thesolution.at/schule',
+  },
 }
 
 const schoolLevels = [

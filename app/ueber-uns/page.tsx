@@ -6,6 +6,9 @@ import { getTeamMembers, type TeamEntry } from '@/lib/contentful'
 export const metadata: Metadata = {
   title: 'Über uns',
   description: 'Das Astrid Lindgren Zentrum - Eine Privatschule mit Tradition und Innovation. Erfahren Sie mehr über unsere Geschichte, unser pädagogisches Konzept und unser Team.',
+  alternates: {
+    canonical: 'https://alz5.thesolution.at/ueber-uns',
+  },
 }
 
 export const revalidate = 300

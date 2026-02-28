@@ -319,9 +319,10 @@ export function HomePage({ latestNews }: Props) {
               >
                 <Image
                   src={src}
-                  alt={`Galerie Bild ${index + 1}`}
+                  alt=""
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
+                  aria-hidden="true"
                 />
               </motion.div>
             ))}

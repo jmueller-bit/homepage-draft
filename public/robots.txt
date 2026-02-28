@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://astrid-lindgren-zentrum.at/sitemap.xml
+# Admin-Bereich nicht indexieren
+Disallow: /admin/
+Disallow: /api/admin/
+
+# Crawl-Delay für alle Bots
+Crawl-delay: 1
+
+# Host-Direktive
+Host: alz5.thesolution.at
+
+Sitemap: https://alz5.thesolution.at/sitemap.xml

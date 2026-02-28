@@ -6,14 +6,68 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import { getNewsBySlug, type NewsEntry } from '@/lib/contentful'
 import { formatDate } from '@/lib/utils'
+import { ArticleSchema, BreadcrumbSchema } from '@/components/seo/json-ld-schema'
 
 interface Props {
   params: { slug: string }
 }
 
-export const metadata: Metadata = {
-  title: 'News',
-  description: 'Aktuelle Neuigkeiten und Termine vom Astrid Lindgren Zentrum.',
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const news = await getNewsBySlug(params.slug)
+  
+  if (!news) {
+    return {
+      title: 'News nicht gefunden',
+      description: 'Der angeforderte Artikel konnte nicht gefunden werden.',
+    }
+  }
+
+  const baseUrl = 'https://alz5.thesolution.at'
+  
+  return {
+    title: news.title,
+    description: news.excerpt || news.title,
+    keywords: [news.category || 'News', 'Astrid Lindgren Zentrum'].filter((k): k is string => Boolean(k)),
+    authors: [{ name: 'Astrid Lindgren Zentrum' }],
+    alternates: {
+      canonical: `${baseUrl}/news/${news.slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      locale: 'de_AT',
+      url: `${baseUrl}/news/${news.slug}`,
+      siteName: 'Astrid Lindgren Zentrum',
+      title: news.title,
+      description: news.excerpt || news.title,
+      publishedTime: news.date,
+      modifiedTime: news.date,
+      authors: ['Astrid Lindgren Zentrum'],
+      tags: news.category ? [news.category] : [],
+      images: news.image
+        ? [
+            {
+              url: news.image.url,
+              width: news.image.width || 1200,
+              height: news.image.height || 630,
+              alt: news.title,
+            },
+          ]
+        : [
+            {
+              url: '/og-image.svg',
+              width: 1200,
+              height: 630,
+              alt: 'Astrid Lindgren Zentrum',
+            },
+          ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: news.title,
+      description: news.excerpt || news.title,
+      images: news.image ? [news.image.url] : ['/og-image.svg'],
+    },
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -66,8 +120,26 @@ export default async function NewsDetailPage({ params }: Props) {
     return notFound()
   }
 
+  const baseUrl = 'https://alz5.thesolution.at'
+  const articleUrl = `${baseUrl}/news/${news.slug}`
+
   return (
     <>
+      <ArticleSchema
+        title={news.title}
+        description={news.excerpt || news.title}
+        url={articleUrl}
+        image={news.image?.url}
+        datePublished={news.date}
+        category={news.category}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Startseite', item: baseUrl },
+          { name: 'News', item: `${baseUrl}/news` },
+          { name: news.title, item: articleUrl },
+        ]}
+      />
       <section className="bg-primary py-8">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <Button variant="ghost" asChild className="text-cream hover:text-cream hover:bg-primary/20 -ml-3">

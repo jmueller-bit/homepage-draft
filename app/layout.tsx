@@ -4,6 +4,7 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { CookieBanner } from '@/components/cookie-banner'
 import { ScrollToTopButton } from '@/components/scroll-to-top'
+import { OrganizationSchema, WebSiteSchema } from '@/components/seo/json-ld-schema'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     description: 'Eine moderne Privatschule in Wien, die Kindern einen kreativen, individuellen und ganzheitlichen Bildungsweg bietet.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.svg',
         width: 1200,
         height: 630,
         alt: 'Astrid Lindgren Zentrum',
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Astrid Lindgren Zentrum - Privatschule Wien',
     description: 'Eine moderne Privatschule in Wien',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.svg'],
   },
   verification: {
     google: 'TODO',
@@ -71,6 +72,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de" className={`${nunito.variable} ${merriweather.variable}`}>
+      <head>
+        <OrganizationSchema type="EducationalOrganization" />
+        <WebSiteSchema 
+          siteUrl="https://alz5.thesolution.at" 
+          siteName="Astrid Lindgren Zentrum"
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1 pt-20">
