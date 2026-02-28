@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getNews, type NewsEntry } from '@/lib/contentful'
 import { formatDate } from '@/lib/utils'
+import { NewsSubnav } from '@/components/news-subnav'
 
 export const metadata: Metadata = {
   title: 'News',
@@ -14,8 +15,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 export const revalidate = 120
 
-export default async function NewsPage() {
-  const newsItems: NewsEntry[] = await getNews(20)
+interface Props {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function NewsPage({ searchParams }: Props) {
+  const category = typeof searchParams.category === 'string' ? searchParams.category : undefined
+  const newsItems: NewsEntry[] = await getNews(20, category)
 
   return (
     <>
@@ -29,6 +35,8 @@ export default async function NewsPage() {
           </p>
         </div>
       </section>
+
+      <NewsSubnav />
 
       <section className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

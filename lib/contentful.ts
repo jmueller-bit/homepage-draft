@@ -110,7 +110,7 @@ function mapNewsEntry(entry: any): NewsEntry | null {
   }
 }
 
-export async function getNews(limit = 10): Promise<NewsEntry[]> {
+export async function getNews(limit = 10, category?: string): Promise<NewsEntry[]> {
   if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
     return [{
       id: 'env-error',
@@ -122,11 +122,18 @@ export async function getNews(limit = 10): Promise<NewsEntry[]> {
   }
 
   try {
-    const entries = await contentfulClient.getEntries({
+    const query: any = {
       content_type: NEWS_CONTENT_TYPE,
       order: ['-fields.datum'],
       limit,
-    })
+    }
+
+    // Wenn eine Kategorie angegeben ist, füge Filter hinzu
+    if (category && category !== 'all') {
+      query['fields.kategorie'] = category
+    }
+
+    const entries = await contentfulClient.getEntries(query)
 
     return (entries.items.map(mapNewsEntry).filter(Boolean) as NewsEntry[]) || []
   } catch (error: any) {
