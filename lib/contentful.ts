@@ -466,7 +466,7 @@ export async function getSchuleEventImages(limit = 50): Promise<GalleryImage[]> 
 }
 
 // Kombinierte Funktion für Galerie mit Filter
-export async function getGalleryImagesByCategory(category: 'allgemein' | 'veranstaltungen' | 'all' = 'all', limit = 50): Promise<GalleryImage[]> {
+export async function getGalleryImagesByCategory(category: 'unterricht' | 'events' | 'sport' | 'all' = 'all', limit = 50): Promise<GalleryImage[]> {
   if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
     console.warn('⚠️ Gallery: CONTENTFUL_SPACE_ID not set, returning empty array')
     return []
@@ -474,35 +474,35 @@ export async function getGalleryImagesByCategory(category: 'allgemein' | 'verans
 
   const allImages: GalleryImage[] = []
 
-  // Lade Bilder basierend auf Kategorie
-  if (category === 'all' || category === 'allgemein') {
-    const allgemeinImages = await getSchuleAllgemeinImages(limit)
-    allImages.push(...allgemeinImages)
-  }
-
-  if (category === 'all' || category === 'veranstaltungen') {
-    const eventImages = await getSchuleEventImages(limit)
-    allImages.push(...eventImages)
-  }
+  // Lade alle Bilder aus allen Content-Typen
+  const allgemeinImages = await getSchuleAllgemeinImages(limit)
+  const eventImages = await getSchuleEventImages(limit)
+  
+  allImages.push(...allgemeinImages, ...eventImages)
 
   // Fallback: alte galleryImage Content-Typ für Abwärtskompatibilität
-  if (category === 'all') {
-    try {
-      const entries = await contentfulClient.getEntries({
-        content_type: GALLERY_CONTENT_TYPE,
-        order: ['fields.reihenfolge'],
-        limit,
-        include: 1,
-      })
+  try {
+    const entries = await contentfulClient.getEntries({
+      content_type: GALLERY_CONTENT_TYPE,
+      order: ['fields.reihenfolge'],
+      limit,
+      include: 1,
+    })
 
-      const galleryImages = entries.items
-        .flatMap(mapGalleryEntry)
-        .sort((a, b) => a.order - b.order)
-      
-      allImages.push(...galleryImages)
-    } catch (error) {
-      console.warn('Fallback galleryImage type not available:', error)
-    }
+    const galleryImages = entries.items
+      .flatMap(mapGalleryEntry)
+      .sort((a, b) => a.order - b.order)
+    
+    allImages.push(...galleryImages)
+  } catch (error) {
+    console.warn('Fallback galleryImage type not available:', error)
+  }
+
+  // Filtere nach Kategorie wenn nicht 'all'
+  if (category !== 'all') {
+    return allImages
+      .filter(img => img.category?.toLowerCase() === category)
+      .sort((a, b) => a.order - b.order)
   }
 
   return allImages.sort((a, b) => a.order - b.order)

@@ -11,7 +11,7 @@ import type { GalleryImage } from '@/lib/contentful'
 
 interface GalerieClientProps {
   initialImages: GalleryImage[]
-  currentCategory: 'allgemein' | 'veranstaltungen' | 'all'
+  currentCategory: 'unterricht' | 'events' | 'sport' | 'all'
 }
 
 // Fallback images wenn Contentful keine Bilder liefert
@@ -20,7 +20,7 @@ const fallbackImages: GalleryImage[] = [
     id: '1',
     src: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop',
     alt: 'Kinder beim Lernen',
-    category: 'Unterricht',
+    category: 'unterricht',
     title: 'Kinder beim Lernen',
     order: 1,
   },
@@ -28,7 +28,7 @@ const fallbackImages: GalleryImage[] = [
     id: '2',
     src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&h=600&fit=crop',
     alt: 'Schulhof',
-    category: 'Schule',
+    category: 'unterricht',
     title: 'Schulhof',
     order: 2,
   },
@@ -36,7 +36,7 @@ const fallbackImages: GalleryImage[] = [
     id: '3',
     src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&h=600&fit=crop',
     alt: 'Kinder beim Spielen',
-    category: 'Aktivitäten',
+    category: 'events',
     title: 'Kinder beim Spielen',
     order: 3,
   },
@@ -44,7 +44,7 @@ const fallbackImages: GalleryImage[] = [
     id: '4',
     src: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=800&h=600&fit=crop',
     alt: 'Musikunterricht',
-    category: 'Kunst',
+    category: 'unterricht',
     title: 'Musikunterricht',
     order: 4,
   },
@@ -52,7 +52,7 @@ const fallbackImages: GalleryImage[] = [
     id: '5',
     src: 'https://images.unsplash.com/photo-1566251037378-5e04e3bec343?w=800&h=600&fit=crop',
     alt: 'Gartenprojekt',
-    category: 'Natur',
+    category: 'events',
     title: 'Gartenprojekt',
     order: 5,
   },
@@ -60,7 +60,7 @@ const fallbackImages: GalleryImage[] = [
     id: '6',
     src: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=800&h=600&fit=crop',
     alt: 'Sport',
-    category: 'Sport',
+    category: 'sport',
     title: 'Sport',
     order: 6,
   },
@@ -68,8 +68,9 @@ const fallbackImages: GalleryImage[] = [
 
 const categoryTabs = [
   { id: 'all', label: 'Alle', href: '/galerie' },
-  { id: 'allgemein', label: 'Allgemein', href: '/galerie?category=allgemein' },
-  { id: 'veranstaltungen', label: 'Veranstaltungen', href: '/galerie?category=veranstaltungen' },
+  { id: 'unterricht', label: 'Unterricht', href: '/galerie?category=unterricht' },
+  { id: 'events', label: 'Events', href: '/galerie?category=events' },
+  { id: 'sport', label: 'Sport', href: '/galerie?category=sport' },
 ]
 
 export default function GalerieClient({ initialImages, currentCategory }: GalerieClientProps) {
