@@ -3,6 +3,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { SchoolSubnav } from '@/components/school-subnav'
+import { School, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Schule',
@@ -103,14 +105,33 @@ export default function SchulePage() {
     <>
       <section className="bg-secondary py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 mb-4">
+            <School className="h-8 w-8 text-charcoal" />
+            <span className="text-charcoal/60 font-sans text-sm uppercase tracking-wider">
+              Bildungsangebot
+            </span>
+          </div>
           <h1 className="font-sans text-4xl font-extrabold text-charcoal sm:text-5xl">
             Unsere Schule
           </h1>
           <p className="mt-4 font-serif text-xl text-charcoal/80 max-w-2xl">
             Von der Vorschule bis zur 9. Schulstufe - ein kompletter Bildungsweg
           </p>
+          
+          {/* Quick Link to Anmeldung */}
+          <div className="mt-8">
+            <Link 
+              href="/schule/anmeldung"
+              className="inline-flex items-center gap-2 bg-schule text-white px-6 py-3 rounded-lg font-sans font-semibold hover:bg-schule/90 transition-colors shadow-md"
+            >
+              Zur Anmeldung
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
+      
+      <SchoolSubnav />
 
       <section className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

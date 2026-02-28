@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Nunito, Merriweather } from 'next/font/google'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { CookieBanner } from '@/components/cookie-banner'
+import { ScrollToTopButton } from '@/components/scroll-to-top'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
@@ -75,6 +77,8 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <CookieBanner />
+        <ScrollToTopButton />
         <SpeedInsights />
         <Analytics />
       </body>

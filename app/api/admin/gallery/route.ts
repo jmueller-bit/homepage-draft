@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { contentfulClient, getManagementClient, GALLERY_CONTENT_TYPE } from '@/lib/contentful'
+import { contentfulClient, GALLERY_CONTENT_TYPE } from '@/lib/contentful'
+import { getManagementClient } from '@/lib/contentful-management'
 import { triggerVercelDeploy } from '@/lib/deploy'
 
 export async function GET() {

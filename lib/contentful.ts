@@ -9,19 +9,6 @@ export const contentfulClient = createClient({
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'TODO',
 })
 
-// Management Client (für Admin-Panel - Create/Update/Delete)
-// Dynamisch importiert um Build-Probleme zu vermeiden
-export const getManagementClient = async () => {
-  if (!process.env.CONTENTFUL_MANAGEMENT_TOKEN) {
-    return null
-  }
-  const { createClient } = await import('contentful-management')
-  return createClient({
-    accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
-    host: 'api.eu.contentful.com', // EU-Region!
-  })
-}
-
 // Validate that environment variables are actually present at runtime
 if (process.env.CONTENTFUL_SPACE_ID === 'TODO' || !process.env.CONTENTFUL_SPACE_ID) {
   console.warn('⚠️ WARNING: CONTENTFUL_SPACE_ID is not set in environment variables! Contentful API will fail.');
