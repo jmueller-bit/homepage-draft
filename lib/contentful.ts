@@ -333,16 +333,18 @@ export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
 function mapJobEntry(entry: any): JobEntry | null {
   const fields = entry.fields as Record<string, any>
 
-  const title = fields.titel || fields.title || fields.jobTitle
+  // Unterstütze verschiedene Feldnamen aus verschiedenen Content-Typen
+  const title = fields.titel || fields.title || fields.jobTitle || fields.position
   const department = fields.abteilung || fields.department
   const location = fields.standort || fields.location || 'Wien'
   const type = fields.art || fields.type || fields.employmentType
-  let description = fields.beschreibung || fields.description || fields.jobDescription
+  let description = fields.beschreibung || fields.description || fields.jobDescription || fields.beschreibungKurz
   const requirements = fields.anforderungen || fields.requirements || []
   const benefits = fields.benefits || fields.vorteile || []
   const contactEmail = fields.kontaktEmail || fields.contactEmail
   const postedDate = fields.eingestelltAm || fields.postedDate || fields.date
-  const isActive = fields.aktiv !== false && fields.isActive !== false
+  // Wenn kein 'aktiv' Feld vorhanden ist, nehmen wir an der Job ist aktiv
+  const isActive = fields.aktiv !== false && fields.isActive !== false && fields.aktiv !== 'false'
 
   if (!title) return null
 
