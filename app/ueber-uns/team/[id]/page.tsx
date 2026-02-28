@@ -5,6 +5,7 @@ import { ArrowLeft, Mail } from 'lucide-react'
 import { getTeamMemberById, getTeamMembers } from '@/lib/contentful'
 import { notFound } from 'next/navigation'
 import { renderRichText } from '@/components/rich-text-renderer'
+import { UeberUnsSubnav } from '@/components/ueber-uns-subnav'
 
 interface Props {
   params: Promise<{
@@ -45,17 +46,8 @@ export default async function TeamMemberPage({ params }: Props) {
 
   return (
     <>
-      {/* Back Button */}
-      <div className="bg-cream pt-24 pb-8">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Link 
-            href="/ueber-uns"
-            className="inline-flex items-center gap-2 font-sans font-semibold text-primary hover:text-primary/80 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Zurück zum Team
-          </Link>
-        </div>
+      <div className="pt-20">
+        <UeberUnsSubnav showBackToTeam={true} />
       </div>
 
       {/* Hero Section */}

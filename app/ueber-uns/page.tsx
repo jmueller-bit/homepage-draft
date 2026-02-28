@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { Quote } from 'lucide-react'
 import { getTeamMembers, type TeamEntry } from '@/lib/contentful'
+import { UeberUnsSubnav } from '@/components/ueber-uns-subnav'
 
 export const metadata: Metadata = {
   title: 'Über uns',
@@ -26,6 +27,45 @@ export default async function UeberUnsPage() {
           <p className="mt-4 font-serif text-xl text-cream/80 max-w-2xl">
             Wir gestalten die Zukunft von Kindern durch Bildung, Kreativität und Menschlichkeit.
           </p>
+        </div>
+      </section>
+
+      <UeberUnsSubnav />
+
+      <section id="paedagogisches-konzept" className="py-16 sm:py-24 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
+            Pädagogisches Konzept
+          </h2>
+          <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-xl bg-cream p-8">
+              <h3 className="font-sans text-xl font-bold text-primary">
+                Individuelle Förderung
+              </h3>
+              <p className="mt-4 font-serif text-charcoal/70">
+                Jedes Kind lernt in seinem eigenen Tempo. Wir identifizieren 
+                Stärken und entwickeln個人liche Lernpläne.
+              </p>
+            </div>
+            <div className="rounded-xl bg-cream p-8">
+              <h3 className="font-sans text-xl font-bold text-primary">
+                Ganzheitliche Bildung
+              </h3>
+              <p className="mt-4 font-serif text-charcoal/70">
+                Neben akademischem Wissen fördern wir soziale Kompetenzen, 
+                kreative Fähigkeiten und körperliche Gesundheit.
+              </p>
+            </div>
+            <div className="rounded-xl bg-cream p-8">
+              <h3 className="font-sans text-xl font-bold text-primary">
+                Progressive Pädagogik
+              </h3>
+              <p className="mt-4 font-serif text-charcoal/70">
+                Wir verbinden bewährte Methoden mit modernsten pädagogischen 
+                Erkenntnissen und digitalen Innovationen.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -66,43 +106,6 @@ export default async function UeberUnsPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
-            Pädagogisches Konzept
-          </h2>
-          <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-xl bg-cream p-8">
-              <h3 className="font-sans text-xl font-bold text-primary">
-                Individuelle Förderung
-              </h3>
-              <p className="mt-4 font-serif text-charcoal/70">
-                Jedes Kind lernt in seinem eigenen Tempo. Wir identifizieren 
-                Stärken und entwickeln個人liche Lernpläne.
-              </p>
-            </div>
-            <div className="rounded-xl bg-cream p-8">
-              <h3 className="font-sans text-xl font-bold text-primary">
-                Ganzheitliche Bildung
-              </h3>
-              <p className="mt-4 font-serif text-charcoal/70">
-                Neben akademischem Wissen fördern wir soziale Kompetenzen, 
-                kreative Fähigkeiten und körperliche Gesundheit.
-              </p>
-            </div>
-            <div className="rounded-xl bg-cream p-8">
-              <h3 className="font-sans text-xl font-bold text-primary">
-                Progressive Pädagogik
-              </h3>
-              <p className="mt-4 font-serif text-charcoal/70">
-                Wir verbinden bewährte Methoden mit modernsten pädagogischen 
-                Erkenntnissen und digitalen Innovationen.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="py-16 sm:py-24 bg-primary/5">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative rounded-2xl bg-white p-8 shadow-xl sm:p-12">
@@ -123,7 +126,7 @@ export default async function UeberUnsPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-cream">
+      <section id="philosophie" className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
             Philosophie
@@ -203,7 +206,7 @@ export default async function UeberUnsPage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-cream">
+      <section id="unser-team" className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
             Unser Team
