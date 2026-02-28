@@ -106,27 +106,28 @@ const activities = [
 export default function SchulePage() {
   return (
     <>
-      <section className="bg-secondary py-16 sm:py-24">
+      <div className="pt-20">
+        <SchoolSubnav />
+      </div>
+      
+      <section className="bg-schule py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-4">
-            <School className="h-8 w-8 text-charcoal" />
-            <span className="text-charcoal/60 font-sans text-sm uppercase tracking-wider">
+            <School className="h-8 w-8 text-white" />
+            <span className="text-white/80 font-sans text-sm uppercase tracking-wider">
               Bildungsangebot
             </span>
           </div>
-          <h1 className="font-sans text-4xl font-extrabold text-charcoal sm:text-5xl">
+          <h1 className="font-sans text-4xl font-extrabold text-white sm:text-5xl">
             Unsere Schule
           </h1>
-          <p className="mt-4 font-serif text-xl text-charcoal/80 max-w-2xl">
+          <p className="mt-4 font-serif text-xl text-white/90 max-w-2xl">
             Von der Vorschule bis zur 9. Schulstufe - ein kompletter Bildungsweg
           </p>
-          
         </div>
       </section>
-      
-      <SchoolSubnav />
 
-      <section className="py-16 sm:py-24 bg-cream">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
             Schulstufen im Überblick
@@ -151,7 +152,7 @@ export default function SchulePage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-white">
+      <section className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
             Ein typischer Tag
@@ -180,7 +181,7 @@ export default function SchulePage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-schule-light">
+      <section className="py-16 sm:py-24 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
             Unser Angebot
@@ -190,7 +191,7 @@ export default function SchulePage() {
           </p>
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {activities.map((activity) => (
-              <div key={activity.title} className="rounded-xl bg-white p-8 shadow-md">
+              <div key={activity.title} className="rounded-xl bg-cream p-8">
                 <h3 className="font-sans text-xl font-bold text-schule">
                   {activity.title}
                 </h3>
@@ -203,15 +204,15 @@ export default function SchulePage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-secondary">
+      <section className="py-16 sm:py-24 bg-schule">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-sans text-3xl font-bold text-charcoal sm:text-4xl">
+          <h2 className="font-sans text-3xl font-bold text-white sm:text-4xl">
             Haben Sie Fragen?
           </h2>
-          <p className="mt-4 font-serif text-lg text-charcoal/80 max-w-2xl mx-auto">
+          <p className="mt-4 font-serif text-lg text-white/90 max-w-2xl mx-auto">
             Wir beraten Sie gerne persönlich zu unserem Schulangebot.
           </p>
-          <Button className="mt-8 bg-charcoal text-cream hover:bg-charcoal/90" asChild>
+          <Button className="mt-8 bg-white text-schule hover:bg-white/90 font-sans font-bold" asChild>
             <Link href="/kontakt">Kontakt aufnehmen</Link>
           </Button>
         </div>
