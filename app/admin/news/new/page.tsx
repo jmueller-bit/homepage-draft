@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Send,
   Check,
-  ImageIcon,
   AlertCircle,
   X,
   Upload
@@ -36,7 +35,7 @@ export default function NewNewsPage() {
     content: '',
     category: '',
     author: '',
-    publishedAt: new Date().toISOString().split('T')[0], // Heute als Default
+    publishedAt: new Date().toISOString().split('T')[0],
     imageUrl: '',
   })
 
@@ -46,7 +45,6 @@ export default function NewNewsPage() {
     }
   }, [router])
 
-  // ✅ Slug-Bug fix: aktualisiert sich immer mit dem Titel, außer manuell bearbeitet
   useEffect(() => {
     if (!slugManuallyEdited && formData.title) {
       const slug = formData.title
@@ -61,17 +59,13 @@ export default function NewNewsPage() {
     }
   }, [formData.title, slugManuallyEdited])
 
-  // 🖼️ Bild auswählen & Vorschau
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    // Max 5MB
     if (file.size > 5 * 1024 * 1024) {
       setError('Bild zu groß (max. 5MB)')
       return
     }
-
     setImageFile(file)
     const reader = new FileReader()
     reader.onload = () => setImagePreview(reader.result as string)
@@ -92,49 +86,26 @@ export default function NewNewsPage() {
     try {
       let imageUrl = formData.imageUrl
 
-<<<<<<< HEAD
-      // 🖼️ Bild zuerst hochladen wenn vorhanden (Vercel Blob)
       if (imageFile) {
         const uploadRes = await fetch(
           `/api/admin/upload?filename=${encodeURIComponent(imageFile.name)}`,
           {
             method: 'POST',
-            body: imageFile,  // ← direkt die Datei, kein FormData!
+            body: imageFile,
           }
         )
 
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json()
-          imageUrl = uploadData.url  // ← Vercel Blob URL
+          imageUrl = uploadData.url
         } else {
           const errData = await uploadRes.json()
           setError(errData.error || 'Bild-Upload fehlgeschlagen')
-=======
-      // 🖼️ Bild zuerst hochladen wenn vorhanden
-      if (imageFile) {
-        const imageData = new FormData()
-        imageData.append('file', imageFile)
-
-        const uploadRes = await fetch('/api/admin/upload', {
-          method: 'POST',
-          body: imageData,
-        })
-
-        if (uploadRes.ok) {
-          const uploadData = await uploadRes.json()
-          imageUrl = uploadData.url
-        } else {
-          setError('Bild-Upload fehlgeschlagen')
->>>>>>> 370a3e4b7da34fd1001e072a67d261b449b62e78
           setIsSubmitting(false)
           return
         }
       }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 370a3e4b7da34fd1001e072a67d261b449b62e78
       const response = await fetch('/api/admin/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -184,7 +155,6 @@ export default function NewNewsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
       <header className="bg-white border-b border-charcoal/10 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -199,7 +169,6 @@ export default function NewNewsPage() {
       <main className="max-w-lg mx-auto px-4 py-4">
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          {/* Titel */}
           <div>
             <Label htmlFor="title" className="text-charcoal">
               Titel <span className="text-red-500">*</span>
@@ -214,7 +183,6 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* ✅ Slug mit manuellem Override */}
           <div>
             <Label htmlFor="slug" className="text-charcoal">
               URL-Slug <span className="text-red-500">*</span>
@@ -246,11 +214,8 @@ export default function NewNewsPage() {
             </div>
           </div>
 
-          {/* 📅 Datum */}
           <div>
-            <Label htmlFor="publishedAt" className="text-charcoal">
-              Datum
-            </Label>
+            <Label htmlFor="publishedAt" className="text-charcoal">Datum</Label>
             <Input
               id="publishedAt"
               type="date"
@@ -260,11 +225,8 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* Kategorie */}
           <div>
-            <Label htmlFor="category" className="text-charcoal">
-              Kategorie
-            </Label>
+            <Label htmlFor="category" className="text-charcoal">Kategorie</Label>
             <Input
               id="category"
               value={formData.category}
@@ -274,11 +236,8 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* Autor */}
           <div>
-            <Label htmlFor="author" className="text-charcoal">
-              Autor
-            </Label>
+            <Label htmlFor="author" className="text-charcoal">Autor</Label>
             <Input
               id="author"
               value={formData.author}
@@ -288,7 +247,6 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* Kurzbeschreibung */}
           <div>
             <Label htmlFor="excerpt" className="text-charcoal">
               Kurzbeschreibung <span className="text-red-500">*</span>
@@ -307,7 +265,6 @@ export default function NewNewsPage() {
             </p>
           </div>
 
-          {/* Inhalt */}
           <div>
             <Label htmlFor="content" className="text-charcoal">
               Inhalt <span className="text-red-500">*</span>
@@ -322,19 +279,13 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* 🖼️ Bild Upload */}
           <div>
             <Label className="text-charcoal">Bild</Label>
-
             {!imagePreview ? (
               <label className="mt-1 flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-charcoal/20 rounded-lg cursor-pointer hover:border-charcoal/40 hover:bg-charcoal/5 transition-colors">
                 <Upload className="w-6 h-6 text-charcoal/40 mb-2" />
-                <span className="text-sm text-charcoal/50 font-serif">
-                  Klicken zum Hochladen
-                </span>
-                <span className="text-xs text-charcoal/30 font-serif mt-1">
-                  PNG, JPG bis 5MB
-                </span>
+                <span className="text-sm text-charcoal/50 font-serif">Klicken zum Hochladen</span>
+                <span className="text-xs text-charcoal/30 font-serif mt-1">PNG, JPG bis 5MB</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -344,11 +295,7 @@ export default function NewNewsPage() {
               </label>
             ) : (
               <div className="mt-1 relative rounded-lg overflow-hidden">
-                <img
-                  src={imagePreview}
-                  alt="Vorschau"
-                  className="w-full h-48 object-cover"
-                />
+                <img src={imagePreview} alt="Vorschau" className="w-full h-48 object-cover" />
                 <button
                   type="button"
                   onClick={removeImage}
@@ -357,15 +304,12 @@ export default function NewNewsPage() {
                   <X className="w-4 h-4" />
                 </button>
                 <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-3 py-1">
-                  <p className="text-white text-xs font-serif truncate">
-                    {imageFile?.name}
-                  </p>
+                  <p className="text-white text-xs font-serif truncate">{imageFile?.name}</p>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Fehler */}
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-2 text-red-600">
@@ -375,7 +319,6 @@ export default function NewNewsPage() {
             </div>
           )}
 
-          {/* Buttons */}
           <div className="pt-4 flex gap-3">
             <Button
               type="button"
