@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   Send,
   Check,
   ImageIcon,
-  AlertCircle
+  AlertCircle,
+  X,
+  Upload
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,7 +25,10 @@ export default function NewNewsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
-  
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
+
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -31,6 +36,8 @@ export default function NewNewsPage() {
     content: '',
     category: '',
     author: '',
+    publishedAt: new Date().toISOString().split('T')[0], // Heute als Default
+    imageUrl: '',
   })
 
   useEffect(() => {
@@ -39,18 +46,43 @@ export default function NewNewsPage() {
     }
   }, [router])
 
-  // Auto-generate slug from title
+  // ✅ Slug-Bug fix: aktualisiert sich immer mit dem Titel, außer manuell bearbeitet
   useEffect(() => {
-    if (formData.title && !formData.slug) {
+    if (!slugManuallyEdited && formData.title) {
       const slug = formData.title
         .toLowerCase()
-        .replace(/[äöüß]/g, (char) => ({'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss'}[char] || char))
+        .replace(/[äöüß]/g, (char) => (
+          { 'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'ß': 'ss' }[char] || char
+        ))
         .replace(/[^a-z0-9\s]/g, '')
         .replace(/\s+/g, '-')
         .substring(0, 50)
       setFormData(prev => ({ ...prev, slug }))
     }
-  }, [formData.title])
+  }, [formData.title, slugManuallyEdited])
+
+  // 🖼️ Bild auswählen & Vorschau
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Bild zu groß (max. 5MB)')
+      return
+    }
+
+    setImageFile(file)
+    const reader = new FileReader()
+    reader.onload = () => setImagePreview(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
+    setImagePreview(null)
+    setFormData(prev => ({ ...prev, imageUrl: '' }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,22 +90,40 @@ export default function NewNewsPage() {
     setIsSubmitting(true)
 
     try {
+      let imageUrl = formData.imageUrl
+
+      // 🖼️ Bild zuerst hochladen wenn vorhanden
+      if (imageFile) {
+        const imageData = new FormData()
+        imageData.append('file', imageFile)
+
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: imageData,
+        })
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json()
+          imageUrl = uploadData.url
+        } else {
+          setError('Bild-Upload fehlgeschlagen')
+          setIsSubmitting(false)
+          return
+        }
+      }
+
       const response = await fetch('/api/admin/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, imageUrl }),
       })
 
       if (response.ok) {
-        // Sende Telegram Benachrichtigung
         await sendTelegramMessage(
           formatNewsNotification(formData.title, formData.excerpt, formData.author || 'ALZ Team')
         )
-        
         setIsSuccess(true)
-        setTimeout(() => {
-          router.push('/admin/news')
-        }, 1500)
+        setTimeout(() => router.push('/admin/news'), 1500)
       } else {
         const data = await response.json()
         setError(data.error || 'Fehler beim Speichern')
@@ -123,9 +173,10 @@ export default function NewNewsPage() {
         </div>
       </header>
 
-      {/* Form */}
       <main className="max-w-lg mx-auto px-4 py-4">
         <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* Titel */}
           <div>
             <Label htmlFor="title" className="text-charcoal">
               Titel <span className="text-red-500">*</span>
@@ -140,6 +191,7 @@ export default function NewNewsPage() {
             />
           </div>
 
+          {/* ✅ Slug mit manuellem Override */}
           <div>
             <Label htmlFor="slug" className="text-charcoal">
               URL-Slug <span className="text-red-500">*</span>
@@ -147,16 +199,45 @@ export default function NewNewsPage() {
             <Input
               id="slug"
               value={formData.slug}
-              onChange={(e) => handleChange('slug', e.target.value)}
+              onChange={(e) => {
+                setSlugManuallyEdited(true)
+                handleChange('slug', e.target.value)
+              }}
               placeholder="sommerfest-2024"
               className="mt-1"
               required
             />
-            <p className="text-xs text-charcoal/50 mt-1 font-serif">
-              Wird automatisch aus dem Titel erstellt
-            </p>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-charcoal/50 font-serif">
+                Wird automatisch aus dem Titel erstellt
+              </p>
+              {slugManuallyEdited && (
+                <button
+                  type="button"
+                  className="text-xs text-blue-500 underline"
+                  onClick={() => setSlugManuallyEdited(false)}
+                >
+                  Reset (Auto)
+                </button>
+              )}
+            </div>
           </div>
 
+          {/* 📅 Datum */}
+          <div>
+            <Label htmlFor="publishedAt" className="text-charcoal">
+              Datum
+            </Label>
+            <Input
+              id="publishedAt"
+              type="date"
+              value={formData.publishedAt}
+              onChange={(e) => handleChange('publishedAt', e.target.value)}
+              className="mt-1"
+            />
+          </div>
+
+          {/* Kategorie */}
           <div>
             <Label htmlFor="category" className="text-charcoal">
               Kategorie
@@ -170,6 +251,7 @@ export default function NewNewsPage() {
             />
           </div>
 
+          {/* Autor */}
           <div>
             <Label htmlFor="author" className="text-charcoal">
               Autor
@@ -183,6 +265,7 @@ export default function NewNewsPage() {
             />
           </div>
 
+          {/* Kurzbeschreibung */}
           <div>
             <Label htmlFor="excerpt" className="text-charcoal">
               Kurzbeschreibung <span className="text-red-500">*</span>
@@ -201,6 +284,7 @@ export default function NewNewsPage() {
             </p>
           </div>
 
+          {/* Inhalt */}
           <div>
             <Label htmlFor="content" className="text-charcoal">
               Inhalt <span className="text-red-500">*</span>
@@ -215,17 +299,50 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* Bild Upload Hinweis */}
-          <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <div className="flex items-start gap-2">
-              <ImageIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 font-serif">
-                <strong>Bild:</strong> Laden Sie das Bild direkt in Contentful hoch 
-                oder fügen Sie später ein Bild-URL hinzu.
-              </p>
-            </div>
+          {/* 🖼️ Bild Upload */}
+          <div>
+            <Label className="text-charcoal">Bild</Label>
+
+            {!imagePreview ? (
+              <label className="mt-1 flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-charcoal/20 rounded-lg cursor-pointer hover:border-charcoal/40 hover:bg-charcoal/5 transition-colors">
+                <Upload className="w-6 h-6 text-charcoal/40 mb-2" />
+                <span className="text-sm text-charcoal/50 font-serif">
+                  Klicken zum Hochladen
+                </span>
+                <span className="text-xs text-charcoal/30 font-serif mt-1">
+                  PNG, JPG bis 5MB
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <div className="mt-1 relative rounded-lg overflow-hidden">
+                <img
+                  src={imagePreview}
+                  alt="Vorschau"
+                  className="w-full h-48 object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-3 py-1">
+                  <p className="text-white text-xs font-serif truncate">
+                    {imageFile?.name}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Fehler */}
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-2 text-red-600">
@@ -235,6 +352,7 @@ export default function NewNewsPage() {
             </div>
           )}
 
+          {/* Buttons */}
           <div className="pt-4 flex gap-3">
             <Button
               type="button"
