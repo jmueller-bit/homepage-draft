@@ -1,14 +1,17 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ImageOff, Images } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type { GalleryImage } from '@/lib/contentful'
 
 interface GalerieClientProps {
   initialImages: GalleryImage[]
+  currentCategory: 'allgemein' | 'veranstaltungen' | 'all'
 }
 
 // Fallback images wenn Contentful keine Bilder liefert
@@ -63,7 +66,13 @@ const fallbackImages: GalleryImage[] = [
   },
 ]
 
-export default function GalerieClient({ initialImages }: GalerieClientProps) {
+const categoryTabs = [
+  { id: 'all', label: 'Alle', href: '/galerie' },
+  { id: 'allgemein', label: 'Allgemein', href: '/galerie?category=allgemein' },
+  { id: 'veranstaltungen', label: 'Veranstaltungen', href: '/galerie?category=veranstaltungen' },
+]
+
+export default function GalerieClient({ initialImages, currentCategory }: GalerieClientProps) {
   const galleryImages = initialImages.length > 0 ? initialImages : fallbackImages
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
@@ -126,21 +135,39 @@ export default function GalerieClient({ initialImages }: GalerieClientProps) {
             Galerie
           </h1>
           <p className="mt-4 font-serif text-xl text-cream/80 max-w-2xl">
-            Ein Blick in unseren Schulalltag
+            Ein Blick in unseren Schulalltag und unsere Veranstaltungen
           </p>
         </div>
       </section>
 
       <section className="py-16 sm:py-24 bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Kategorie Tabs */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {categoryTabs.map((tab) => (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={cn(
+                  'px-4 py-2 rounded-lg font-sans font-semibold text-sm transition-colors',
+                  currentCategory === tab.id || (currentCategory === 'all' && tab.id === 'all')
+                    ? 'bg-primary text-cream'
+                    : 'bg-white text-charcoal hover:bg-primary/10'
+                )}
+              >
+                {tab.label}
+              </Link>
+            ))}
+          </div>
+
           {galleryImages.length === 0 ? (
             <div className="text-center py-12">
               <ImageOff className="mx-auto h-12 w-12 text-charcoal/30" />
               <p className="mt-4 font-sans text-lg text-charcoal">
-                Derzeit sind keine Bilder in der Galerie verfügbar.
+                Derzeit sind keine Bilder in dieser Kategorie verfügbar.
               </p>
               <p className="mt-2 font-serif text-charcoal/70">
-                Sobald neue Bilder hinzugefügt werden, erscheinen sie hier automatisch.
+                Bitte wählen Sie eine andere Kategorie oder besuchen Sie uns später wieder.
               </p>
             </div>
           ) : (

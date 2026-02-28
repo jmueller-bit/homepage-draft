@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { HomePage } from '@/components/home-page'
-import { getLatestNews } from '@/lib/contentful'
+import { getLatestNews, getSchuleAllgemeinImages, type GalleryImage } from '@/lib/contentful'
 
 export const metadata: Metadata = {
   alternates: {
@@ -11,6 +11,10 @@ export const metadata: Metadata = {
 export const revalidate = 120
 
 export default async function Page() {
-  const latestNews = await getLatestNews(3)
-  return <HomePage latestNews={latestNews} />
+  const [latestNews, alltagImages] = await Promise.all([
+    getLatestNews(3),
+    getSchuleAllgemeinImages(6), // Lade 6 Bilder für den Alltag-Abschnitt
+  ])
+  
+  return <HomePage latestNews={latestNews} alltagImages={alltagImages} />
 }

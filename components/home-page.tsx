@@ -7,7 +7,7 @@ import { ArrowRight, Sparkles, Heart, Leaf } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn, formatDate } from '@/lib/utils'
-import type { NewsEntry } from '@/lib/contentful'
+import type { NewsEntry, GalleryImage } from '@/lib/contentful'
 
 const features = [
   {
@@ -33,13 +33,56 @@ const stats = [
   { value: '9', label: 'Schulstufen' },
 ]
 
-const galleryImages = [
-  'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=500&fit=crop',
-  'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=600&h=500&fit=crop',
-  'https://images.unsplash.com/photo-1566251037378-5e04e3bec343?w=600&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=600&h=500&fit=crop',
+// Fallback images für den Alltag-Abschnitt wenn keine Contentful Bilder vorhanden
+const fallbackAlltagImages: GalleryImage[] = [
+  {
+    id: '1',
+    src: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop',
+    alt: 'Kinder beim Lernen',
+    category: 'Unterricht',
+    title: 'Kinder beim Lernen',
+    order: 1,
+  },
+  {
+    id: '2',
+    src: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=500&fit=crop',
+    alt: 'Schulhof',
+    category: 'Schule',
+    title: 'Schulhof',
+    order: 2,
+  },
+  {
+    id: '3',
+    src: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&h=400&fit=crop',
+    alt: 'Kinder beim Spielen',
+    category: 'Aktivitäten',
+    title: 'Kinder beim Spielen',
+    order: 3,
+  },
+  {
+    id: '4',
+    src: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=600&h=500&fit=crop',
+    alt: 'Musikunterricht',
+    category: 'Kunst',
+    title: 'Musikunterricht',
+    order: 4,
+  },
+  {
+    id: '5',
+    src: 'https://images.unsplash.com/photo-1566251037378-5e04e3bec343?w=600&h=400&fit=crop',
+    alt: 'Gartenprojekt',
+    category: 'Natur',
+    title: 'Gartenprojekt',
+    order: 5,
+  },
+  {
+    id: '6',
+    src: 'https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=600&h=500&fit=crop',
+    alt: 'Sport',
+    category: 'Sport',
+    title: 'Sport',
+    order: 6,
+  },
 ]
 
 const containerVariants = {
@@ -66,9 +109,10 @@ const itemVariants = {
 
 interface Props {
   latestNews: NewsEntry[]
+  alltagImages: GalleryImage[]
 }
 
-export function HomePage({ latestNews }: Props) {
+export function HomePage({ latestNews, alltagImages }: Props) {
   return (
     <>
       <section className="relative h-[calc(100vh-5rem)] min-h-[600px] flex items-center overflow-hidden">
@@ -308,9 +352,9 @@ export function HomePage({ latestNews }: Props) {
             variants={containerVariants}
             className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3"
           >
-            {galleryImages.map((src, index) => (
+            {(alltagImages.length > 0 ? alltagImages : fallbackAlltagImages).map((image, index) => (
               <motion.div
-                key={index}
+                key={image.id}
                 variants={itemVariants}
                 className={cn(
                   'relative aspect-square overflow-hidden rounded-lg',
@@ -318,11 +362,10 @@ export function HomePage({ latestNews }: Props) {
                 )}
               >
                 <Image
-                  src={src}
-                  alt=""
+                  src={image.src}
+                  alt={image.alt}
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
-                  aria-hidden="true"
                 />
               </motion.div>
             ))}

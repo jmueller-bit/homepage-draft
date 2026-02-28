@@ -2,6 +2,8 @@ import { createClient } from 'contentful'
 
 export const NEWS_CONTENT_TYPE = 'newsArtikel'
 export const GALLERY_CONTENT_TYPE = 'galleryImage'
+export const SCHULE_ALLGEMEIN_CONTENT_TYPE = 'schuleAllgemein'
+export const SCHULE_EVENT_CONTENT_TYPE = 'schuleEvent'
 
 // Delivery Client (read-only, für öffentliche Website)
 export const contentfulClient = createClient({
@@ -414,4 +416,94 @@ export async function getJobById(id: string): Promise<JobEntry | null> {
     console.error(`Error fetching job ${id}:`, error)
     return null
   }
+}
+
+// Neue Funktionen für Schule-Galerie Content-Typen
+export async function getSchuleAllgemeinImages(limit = 50): Promise<GalleryImage[]> {
+  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+    console.warn('⚠️ Schule Allgemein: CONTENTFUL_SPACE_ID not set, returning empty array')
+    return []
+  }
+
+  try {
+    const entries = await contentfulClient.getEntries({
+      content_type: SCHULE_ALLGEMEIN_CONTENT_TYPE,
+      order: ['fields.reihenfolge'],
+      limit,
+      include: 1,
+    })
+
+    return entries.items
+      .flatMap(mapGalleryEntry)
+      .sort((a, b) => a.order - b.order)
+  } catch (error: any) {
+    console.error('Error fetching schule allgemein images:', error)
+    return []
+  }
+}
+
+export async function getSchuleEventImages(limit = 50): Promise<GalleryImage[]> {
+  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+    console.warn('⚠️ Schule Events: CONTENTFUL_SPACE_ID not set, returning empty array')
+    return []
+  }
+
+  try {
+    const entries = await contentfulClient.getEntries({
+      content_type: SCHULE_EVENT_CONTENT_TYPE,
+      order: ['fields.reihenfolge'],
+      limit,
+      include: 1,
+    })
+
+    return entries.items
+      .flatMap(mapGalleryEntry)
+      .sort((a, b) => a.order - b.order)
+  } catch (error: any) {
+    console.error('Error fetching schule event images:', error)
+    return []
+  }
+}
+
+// Kombinierte Funktion für Galerie mit Filter
+export async function getGalleryImagesByCategory(category: 'allgemein' | 'veranstaltungen' | 'all' = 'all', limit = 50): Promise<GalleryImage[]> {
+  if (!process.env.CONTENTFUL_SPACE_ID || process.env.CONTENTFUL_SPACE_ID === 'TODO') {
+    console.warn('⚠️ Gallery: CONTENTFUL_SPACE_ID not set, returning empty array')
+    return []
+  }
+
+  const allImages: GalleryImage[] = []
+
+  // Lade Bilder basierend auf Kategorie
+  if (category === 'all' || category === 'allgemein') {
+    const allgemeinImages = await getSchuleAllgemeinImages(limit)
+    allImages.push(...allgemeinImages)
+  }
+
+  if (category === 'all' || category === 'veranstaltungen') {
+    const eventImages = await getSchuleEventImages(limit)
+    allImages.push(...eventImages)
+  }
+
+  // Fallback: alte galleryImage Content-Typ für Abwärtskompatibilität
+  if (category === 'all') {
+    try {
+      const entries = await contentfulClient.getEntries({
+        content_type: GALLERY_CONTENT_TYPE,
+        order: ['fields.reihenfolge'],
+        limit,
+        include: 1,
+      })
+
+      const galleryImages = entries.items
+        .flatMap(mapGalleryEntry)
+        .sort((a, b) => a.order - b.order)
+      
+      allImages.push(...galleryImages)
+    } catch (error) {
+      console.warn('Fallback galleryImage type not available:', error)
+    }
+  }
+
+  return allImages.sort((a, b) => a.order - b.order)
 }
