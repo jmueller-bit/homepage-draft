@@ -230,13 +230,15 @@ export function HomePage({ latestNews, alltagImages }: Props) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative aspect-[4/3] overflow-hidden rounded-2xl"
+              className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl"
             >
               <Image
-                src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&h=600&fit=crop"
-                alt="Kinder in der Schule"
+                src="/images/gallery/classroom_notreal.jpeg"
+                alt="Willkommen in der fröhlichsten Klasse der Welt - Klassenzimmer mit Tafel, Schreibtischen und dekorativem Blumengirlanden"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
               />
             </motion.div>
           </div>

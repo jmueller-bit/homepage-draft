@@ -373,7 +373,9 @@ function mapJobEntry(entry: any): JobEntry | null {
 }
 
 export async function getJobListings(): Promise<JobEntry[]> {
-  const contentTypes = ['stellenanzeige', 'jobPosting', 'job']
+  // Versuche verschiedene Content-Typen (ältere und neue Namen)
+  const contentTypes = ['stellen', 'stellenanzeige', 'jobPosting', 'job']
+  const allJobs: JobEntry[] = []
 
   for (const contentType of contentTypes) {
     try {
@@ -383,21 +385,11 @@ export async function getJobListings(): Promise<JobEntry[]> {
       })
 
       const mapped = entries.items.map(mapJobEntry).filter(Boolean) as JobEntry[]
-      if (mapped.length > 0) {
-        // Only return active jobs, sorted by posted date
-        return mapped
-          .filter(job => job.isActive)
-          .sort((a, b) => {
-            if (a.postedDate && b.postedDate) {
-              return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
-            }
-            return 0
-          })
-      }
+      allJobs.push(...mapped)
     } catch (error) {
       // Check if error is due to unknown content type
       const err = error as any
-      if (err?.name === 'unknownContentType') {
+      if (err?.name === 'unknownContentType' || err?.details?.errors?.[0]?.name === 'unknownContentType') {
         // Content type doesn't exist, try the next one
         continue
       }
@@ -405,7 +397,15 @@ export async function getJobListings(): Promise<JobEntry[]> {
     }
   }
 
-  return []
+  // Filter aktive Jobs und sortiere nach Datum
+  return allJobs
+    .filter(job => job.isActive)
+    .sort((a, b) => {
+      if (a.postedDate && b.postedDate) {
+        return new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime()
+      }
+      return 0
+    })
 }
 
 export async function getJobById(id: string): Promise<JobEntry | null> {
