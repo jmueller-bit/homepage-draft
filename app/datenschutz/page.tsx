@@ -31,10 +31,10 @@ export default function DatenschutzPage() {
 
             <h3 className="font-sans text-xl font-bold text-charcoal mt-8">1. Verantwortlicher</h3>
             <p>
-              Astrid Lindgren Zentrum<br />
-              Mariahilfer Straße 123<br />
-              1060 Wien<br />
-              E-Mail: info@astrid-lindgren-zentrum.at
+              Astrid Lindgren Zentrum – Verein für Pädagogik und Kultur<br />
+              Breitenfurter Straße 401-413/1/R02<br />
+              1230 Wien<br />
+              E-Mail: office@astrid-lindgren-zentrum.at
             </p>
 
             <h3 className="font-sans text-xl font-bold text-charcoal mt-8">2. Datenschutzbeauftragter</h3>

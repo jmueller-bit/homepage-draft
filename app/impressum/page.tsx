@@ -70,7 +70,7 @@ export default function ImpressumPage() {
                     <span className="font-semibold">Obmann:</span> Inno Fail
                   </li>
                   <li>
-                    <span className="font-semibold">Kassiererin:</span> Vanessa Spielauer
+                    <span className="font-semibold">Kassiererin:</span> Ilona Müller-Pflegerl
                   </li>
                 </ul>
               </div>

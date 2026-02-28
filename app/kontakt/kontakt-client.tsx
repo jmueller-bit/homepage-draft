@@ -70,7 +70,7 @@ export default function KontaktClient() {
 
   const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${MAP_COORDS.bbox}&layer=mapnik&marker=${MAP_COORDS.marker}`
   const mapExternalUrl = `https://www.openstreetmap.org/?mlat=${MAP_COORDS.lat}&mlon=${MAP_COORDS.lng}#map=17/${MAP_COORDS.lat}/${MAP_COORDS.lng}`
-  const googleMapsUrl = `https://maps.google.com/maps?q=${MAP_COORDS.lat},${MAP_COORDS.lng}`
+  const googleMapsUrl = 'https://maps.app.goo.gl/RjBZcY1Tx31joX1e8'
 
   return (
     <>
