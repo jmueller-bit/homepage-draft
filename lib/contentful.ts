@@ -52,6 +52,9 @@ export type GalleryImage = {
   description?: string
   width?: number
   height?: number
+  entryId?: string  // Referenz zum Original-Eintrag
+  imageIndex?: number  // Index innerhalb des Eintrags
+  totalImages?: number  // Anzahl der Bilder im Eintrag
 }
 
 export type JobEntry = {
@@ -221,7 +224,7 @@ function mapTeamEntry(entry: any): TeamEntry | null {
   }
 }
 
-function mapGalleryImage(entry: any): GalleryImage | null {
+function mapGalleryEntry(entry: any): GalleryImage[] {
   const fields = entry.fields as Record<string, any>
 
   const title = fields.titel
@@ -229,34 +232,39 @@ function mapGalleryImage(entry: any): GalleryImage | null {
   const order = fields.reihenfolge ?? 0
   
   // Handle bild array (Contentful Asset array)
-  // Contentful resolves linked assets automatically when using include
   const bildArray = fields.bild
-  let imageAsset = null
   
-  if (Array.isArray(bildArray) && bildArray.length > 0) {
-    // Asset is already resolved by Contentful client
-    imageAsset = bildArray[0]
+  if (!title || !Array.isArray(bildArray) || bildArray.length === 0) {
+    console.warn('Gallery entry missing title or images:', entry.sys.id)
+    return []
   }
 
-  const imageFile = imageAsset?.fields?.file
-
-  if (!title || !imageFile) {
-    console.warn('Gallery image missing title or file:', entry.sys.id)
-    return null
-  }
-
-  const imageUrl = imageFile.url?.startsWith('http') ? imageFile.url : `https:${imageFile.url}`
-
-  return {
-    id: entry.sys.id,
-    title,
-    src: imageUrl,
-    alt: title,
-    category,
-    order: typeof order === 'number' ? order : 0,
-    width: imageFile.details?.image?.width,
-    height: imageFile.details?.image?.height,
-  }
+  const totalImages = bildArray.length
+  
+  // Erstelle für jedes Bild einen GalleryImage Eintrag
+  return bildArray
+    .filter((imageAsset: any) => imageAsset?.fields?.file)
+    .map((imageAsset: any, index: number) => {
+      const imageFile = imageAsset.fields.file
+      const imageUrl = imageFile.url?.startsWith('http') ? imageFile.url : `https:${imageFile.url}`
+      
+      // Für einzelne Bilder einfacher Titel, für mehrere nummeriert
+      const imageTitle = totalImages > 1 ? `${title} (${index + 1}/${totalImages})` : title
+      
+      return {
+        id: `${entry.sys.id}-${index}`,  // Eindeutige ID für jedes Bild
+        title: imageTitle,
+        src: imageUrl,
+        alt: imageTitle,
+        category,
+        order: (typeof order === 'number' ? order : 0) * 100 + index,  // Sortierung
+        width: imageFile.details?.image?.width,
+        height: imageFile.details?.image?.height,
+        entryId: entry.sys.id,  // Referenz zum Original-Eintrag
+        imageIndex: index,  // Index innerhalb des Eintrags
+        totalImages: totalImages,  // Anzahl der Bilder im Eintrag
+      }
+    })
 }
 
 export async function getTeamMembers(): Promise<TeamEntry[]> {
@@ -310,7 +318,9 @@ export async function getGalleryImages(limit = 50): Promise<GalleryImage[]> {
       include: 1, // Include linked assets
     })
 
-    return (entries.items.map(mapGalleryImage).filter(Boolean) as GalleryImage[])
+    // Flatten: Ein Eintrag kann mehrere Bilder haben
+    return entries.items
+      .flatMap(mapGalleryEntry)
       .sort((a, b) => a.order - b.order)
   } catch (error: any) {
     console.error('Error fetching gallery images:', error)

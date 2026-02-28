@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, ZoomIn, ImageOff } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ZoomIn, ImageOff, Images } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { GalleryImage } from '@/lib/contentful'
 
@@ -12,7 +12,7 @@ interface GalerieClientProps {
 }
 
 // Fallback images wenn Contentful keine Bilder liefert
-const fallbackImages = [
+const fallbackImages: GalleryImage[] = [
   {
     id: '1',
     src: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop',
@@ -67,6 +67,19 @@ export default function GalerieClient({ initialImages }: GalerieClientProps) {
   const galleryImages = initialImages.length > 0 ? initialImages : fallbackImages
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
+  // Gruppiere Bilder nach Eintrag für die Lightbox-Navigation
+  const imagesByEntry = useMemo(() => {
+    const groups: { [entryId: string]: GalleryImage[] } = {}
+    galleryImages.forEach((img) => {
+      const entryId = img.entryId || img.id
+      if (!groups[entryId]) {
+        groups[entryId] = []
+      }
+      groups[entryId].push(img)
+    })
+    return groups
+  }, [galleryImages])
+
   const openLightbox = (index: number) => {
     setSelectedImage(index)
   }
@@ -86,6 +99,22 @@ export default function GalerieClient({ initialImages }: GalerieClientProps) {
     e.stopPropagation()
     if (selectedImage !== null) {
       setSelectedImage(selectedImage === galleryImages.length - 1 ? 0 : selectedImage + 1)
+    }
+  }
+
+  // Finde verwandte Bilder (vom selben Eintrag)
+  const getRelatedImages = (currentIndex: number): GalleryImage[] => {
+    if (currentIndex === null) return []
+    const currentImage = galleryImages[currentIndex]
+    const entryId = currentImage?.entryId || currentImage?.id
+    return imagesByEntry[entryId] || [currentImage]
+  }
+
+  // Springe zu einem bestimmten Bild im selben Eintrag
+  const jumpToImage = (targetImage: GalleryImage) => {
+    const index = galleryImages.findIndex((img) => img.id === targetImage.id)
+    if (index !== -1) {
+      setSelectedImage(index)
     }
   }
 
@@ -148,6 +177,14 @@ export default function GalerieClient({ initialImages }: GalerieClientProps) {
                       {image.category}
                     </p>
                   </div>
+                  
+                  {/* Badge für Einträge mit mehreren Bildern */}
+                  {image.totalImages && image.totalImages > 1 && (
+                    <div className="absolute top-3 right-3 bg-primary/90 text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs font-medium">
+                      <Images className="h-3 w-3" />
+                      {image.totalImages}
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </motion.div>
@@ -161,63 +198,114 @@ export default function GalerieClient({ initialImages }: GalerieClientProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
+            className="fixed inset-0 z-50 flex flex-col bg-black/95"
             onClick={closeLightbox}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
-              onClick={showPrev}
-              aria-label="Vorheriges Bild"
-            >
-              <ChevronLeft className="h-8 w-8" />
-            </Button>
+            {/* Hauptbild Bereich */}
+            <div className="flex-1 flex items-center justify-center relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                onClick={showPrev}
+                aria-label="Vorheriges Bild"
+              >
+                <ChevronLeft className="h-8 w-8" />
+              </Button>
 
-            <motion.div
-              key={selectedImage}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-h-[90vh] max-w-[90vw]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={galleryImages[selectedImage].src}
-                alt={galleryImages[selectedImage].alt}
-                width={1200}
-                height={800}
-                className="max-h-[90vh] w-auto object-contain"
-              />
-              <div className="absolute -bottom-16 left-0 right-0 text-center">
-                <p className="font-sans font-medium text-white">
-                  {galleryImages[selectedImage].title}
-                </p>
-                <p className="font-serif text-sm text-white/70">
-                  {galleryImages[selectedImage].category}
-                </p>
-              </div>
-            </motion.div>
+              <motion.div
+                key={selectedImage}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="relative max-h-[70vh] max-w-[85vw]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Image
+                  src={galleryImages[selectedImage].src}
+                  alt={galleryImages[selectedImage].alt}
+                  width={1200}
+                  height={800}
+                  className="max-h-[70vh] w-auto object-contain"
+                />
+              </motion.div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
-              onClick={showNext}
-              aria-label="Nächstes Bild"
-            >
-              <ChevronRight className="h-8 w-8" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                onClick={showNext}
+                aria-label="Nächstes Bild"
+              >
+                <ChevronRight className="h-8 w-8" />
+              </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-4 top-4 text-white hover:bg-white/20"
-              onClick={closeLightbox}
-              aria-label="Schließen"
-            >
-              <X className="h-8 w-8" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-4 text-white hover:bg-white/20 z-10"
+                onClick={closeLightbox}
+                aria-label="Schließen"
+              >
+                <X className="h-8 w-8" />
+              </Button>
+            </div>
+
+            {/* Info-Bar */}
+            <div className="bg-black/80 px-6 py-4 text-center">
+              <p className="font-sans font-medium text-white text-lg">
+                {galleryImages[selectedImage].title}
+              </p>
+              <p className="font-serif text-sm text-white/70 mt-1">
+                {galleryImages[selectedImage].category}
+                {galleryImages[selectedImage].totalImages && galleryImages[selectedImage].totalImages > 1 && (
+                  <span className="ml-2 text-primary">
+                    • Bild {galleryImages[selectedImage].imageIndex! + 1} von {galleryImages[selectedImage].totalImages}
+                  </span>
+                )}
+              </p>
+              <p className="font-serif text-xs text-white/50 mt-2">
+                {selectedImage + 1} von {galleryImages.length}
+              </p>
+            </div>
+
+            {/* Thumbnails der verwandten Bilder */}
+            {(() => {
+              const relatedImages = getRelatedImages(selectedImage)
+              if (relatedImages.length > 1) {
+                return (
+                  <div 
+                    className="bg-black/60 px-6 py-3 overflow-x-auto"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <p className="text-white/60 text-xs mb-2 text-center">
+                      Weitere Bilder aus diesem Eintrag:
+                    </p>
+                    <div className="flex justify-center gap-2">
+                      {relatedImages.map((img) => (
+                        <button
+                          key={img.id}
+                          onClick={() => jumpToImage(img)}
+                          className={`relative w-16 h-16 rounded overflow-hidden transition-all ${
+                            img.id === galleryImages[selectedImage].id
+                              ? 'ring-2 ring-primary ring-offset-2 ring-offset-black'
+                              : 'opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          <Image
+                            src={img.src}
+                            alt={img.alt}
+                            fill
+                            className="object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+              return null
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
