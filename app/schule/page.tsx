@@ -121,16 +121,6 @@ export default function SchulePage() {
             Von der Vorschule bis zur 9. Schulstufe - ein kompletter Bildungsweg
           </p>
           
-          {/* Quick Link to Anmeldung */}
-          <div className="mt-8">
-            <Link 
-              href="/schule/anmeldung"
-              className="inline-flex items-center gap-2 bg-schule text-white px-6 py-3 rounded-lg font-sans font-semibold hover:bg-schule/90 transition-colors shadow-md"
-            >
-              Zur Anmeldung
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
         </div>
       </section>
       

@@ -83,6 +83,24 @@ export default function AnmeldungPage() {
   
   return (
     <>
+      {/* Hero Section */}
+      <section className="bg-secondary py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 mb-4">
+            <School className="h-8 w-8 text-charcoal" />
+            <span className="text-charcoal/60 font-sans text-sm uppercase tracking-wider">
+              Schule
+            </span>
+          </div>
+          <h1 className="font-sans text-4xl font-extrabold text-charcoal sm:text-5xl">
+            Anmeldung
+          </h1>
+          <p className="mt-4 font-serif text-xl text-charcoal/80 max-w-2xl">
+            Wir begleiten Sie und Ihr Kind auf dem Weg zu uns - Schritt für Schritt
+          </p>
+        </div>
+      </section>
+
       <BreadcrumbSchema
         items={[
           { name: 'Startseite', item: baseUrl },
