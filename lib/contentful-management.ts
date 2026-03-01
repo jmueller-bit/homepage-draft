@@ -2,12 +2,20 @@
 // This file should only be imported by admin pages
 
 export const getManagementClient = async () => {
-  if (!process.env.CONTENTFUL_MANAGEMENT_TOKEN) {
+  const token = process.env.CONTENTFUL_MANAGEMENT_TOKEN?.trim()
+  if (!token) {
+    console.error('CONTENTFUL_MANAGEMENT_TOKEN is not set')
     return null
   }
+  
+  const spaceId = process.env.CONTENTFUL_SPACE_ID?.trim()
+  console.log('Creating management client for space:', spaceId)
+  console.log('Token exists:', !!token)
+  console.log('Token length:', token.length)
+  
   const { createClient } = await import('contentful-management')
   return createClient({
-    accessToken: process.env.CONTENTFUL_MANAGEMENT_TOKEN,
+    accessToken: token,
     host: 'api.eu.contentful.com', // EU-Region!
   })
 }
