@@ -79,12 +79,8 @@ const infoEvents = [
 export default function AnmeldungPage() {
   return (
     <>
-      <div className="pt-20">
-        <SchoolSubnav />
-      </div>
-      
       {/* Hero Section */}
-      <section className="bg-schule py-16 sm:py-24">
+      <section className="bg-schule py-16 sm:py-24 pt-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-4">
             <School className="h-8 w-8 text-white" />
@@ -100,6 +96,8 @@ export default function AnmeldungPage() {
           </p>
         </div>
       </section>
+
+      <SchoolSubnav />
 
       {/* Main Content with Tabs */}
       <section className="py-16 sm:py-20 bg-cream">
