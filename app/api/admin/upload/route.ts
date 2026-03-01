@@ -22,6 +22,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
         const blob = await put(`news/${cleanFilename}`, request.body, {
             access: 'public',
+            allowOverwrite: true, // Enable overwriting an existing blob with the same pathname
         });
 
         return NextResponse.json(blob);
