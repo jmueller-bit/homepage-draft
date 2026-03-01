@@ -12,8 +12,7 @@ import {
   CheckCircle, 
   Clock,
   MapPin,
-  ArrowRight,
-  School
+  ArrowRight
 } from 'lucide-react'
 import { SchoolSubnav } from '@/components/school-subnav'
 
@@ -45,7 +44,7 @@ const admissionSteps = [
     step: 4,
     title: 'Hospitation Kind',
     description: 'Hospitation des Kindes für eine ganze Woche (Mo-Fr 8-13:30 Uhr)',
-    icon: School,
+    icon: Users,
   },
   {
     step: 5,
@@ -80,18 +79,12 @@ export default function AnmeldungPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-schule py-16 sm:py-24 pt-24">
+      <section className="bg-secondary py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-4">
-            <School className="h-8 w-8 text-white" />
-            <span className="text-white/80 font-sans text-sm uppercase tracking-wider">
-              Schule
-            </span>
-          </div>
-          <h1 className="font-sans text-4xl font-extrabold text-white sm:text-5xl">
+          <h1 className="font-sans text-4xl font-extrabold text-cream sm:text-5xl">
             Anmeldung
           </h1>
-          <p className="mt-4 font-serif text-xl text-white/90 max-w-2xl">
+          <p className="mt-4 font-serif text-xl text-cream/80 max-w-2xl">
             Wir begleiten Sie und Ihr Kind auf dem Weg zu uns - Schritt für Schritt
           </p>
         </div>
@@ -104,13 +97,13 @@ export default function AnmeldungPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="info" className="w-full">
             <TabsList className="w-full max-w-2xl mx-auto mb-8 grid grid-cols-3 bg-white p-1 rounded-xl">
-              <TabsTrigger value="info" className="font-sans font-semibold data-[state=active]:bg-schule data-[state=active]:text-white rounded-lg">
+              <TabsTrigger value="info" className="font-sans font-semibold data-[state=active]:bg-secondary data-[state=active]:text-white rounded-lg">
                 Informationen
               </TabsTrigger>
-              <TabsTrigger value="process" className="font-sans font-semibold data-[state=active]:bg-schule data-[state=active]:text-white rounded-lg">
+              <TabsTrigger value="process" className="font-sans font-semibold data-[state=active]:bg-secondary data-[state=active]:text-white rounded-lg">
                 Aufnahmeprozess
               </TabsTrigger>
-              <TabsTrigger value="contact" className="font-sans font-semibold data-[state=active]:bg-schule data-[state=active]:text-white rounded-lg">
+              <TabsTrigger value="contact" className="font-sans font-semibold data-[state=active]:bg-secondary data-[state=active]:text-white rounded-lg">
                 Kontakt
               </TabsTrigger>
             </TabsList>
@@ -121,7 +114,7 @@ export default function AnmeldungPage() {
                 <Card className="bg-white border-none shadow-lg">
                   <CardHeader>
                     <CardTitle className="font-sans text-2xl text-charcoal flex items-center gap-2">
-                      <Calendar className="h-6 w-6 text-schule" />
+                      <Calendar className="h-6 w-6 text-secondary" />
                       Infos zur Anmeldung
                     </CardTitle>
                   </CardHeader>
@@ -132,12 +125,12 @@ export default function AnmeldungPage() {
                     </p>
                     <p>
                       Unsere Kontaktdaten finden Sie unten oder auf der{' '}
-                      <Link href="/kontakt" className="text-schule hover:underline font-semibold">
+                      <Link href="/kontakt" className="text-secondary hover:underline font-semibold">
                         Kontaktseite
                       </Link>.
                     </p>
-                    <div className="bg-schule/10 rounded-lg p-4 mt-4">
-                      <p className="font-semibold text-schule mb-2">
+                    <div className="bg-secondary/10 rounded-lg p-4 mt-4">
+                      <p className="font-semibold text-secondary mb-2">
                         Wichtige Information:
                       </p>
                       <p>
@@ -154,24 +147,24 @@ export default function AnmeldungPage() {
                 <Card className="bg-white border-none shadow-lg">
                   <CardHeader>
                     <CardTitle className="font-sans text-2xl text-charcoal flex items-center gap-2">
-                      <Clock className="h-6 w-6 text-schule" />
+                      <Clock className="h-6 w-6 text-secondary" />
                       Termine für Informationsveranstaltungen
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {infoEvents.map((event, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 bg-cream rounded-lg">
-                        <CheckCircle className="h-5 w-5 text-schule mt-0.5 shrink-0" />
+                        <CheckCircle className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
                         <div>
                           <h4 className="font-sans font-semibold text-charcoal">{event.title}</h4>
                           <p className="font-serif text-charcoal/70 text-sm">{event.description}</p>
                         </div>
                       </div>
                     ))}
-                    <div className="mt-4 p-4 bg-schule/10 rounded-lg">
+                    <div className="mt-4 p-4 bg-secondary/10 rounded-lg">
                       <p className="font-serif text-charcoal/80 text-sm">
                         Aktuelle Termine finden Sie unter{' '}
-                        <Link href="/news" className="text-schule hover:underline font-semibold">
+                        <Link href="/news" className="text-secondary hover:underline font-semibold">
                           Aktuelles
                         </Link>
                       </p>
@@ -201,24 +194,24 @@ export default function AnmeldungPage() {
                         className="relative bg-cream rounded-xl p-6 hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-full bg-schule text-white flex items-center justify-center font-sans font-bold text-lg shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-sans font-bold text-lg shrink-0">
                             {step.step}
                           </div>
-                          <step.icon className="h-5 w-5 text-schule" />
+                          <step.icon className="h-5 w-5 text-secondary" />
                         </div>
                         <h4 className="font-sans font-bold text-charcoal mb-2">{step.title}</h4>
                         <p className="font-serif text-charcoal/70 text-sm">{step.description}</p>
                         
                         {index < admissionSteps.length - 1 && (
                           <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2">
-                            <ArrowRight className="h-5 w-5 text-schule/40" />
+                            <ArrowRight className="h-5 w-5 text-secondary/40" />
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
                   
-                  <div className="mt-8 p-6 bg-schule/10 rounded-xl">
+                  <div className="mt-8 p-6 bg-secondary/10 rounded-xl">
                     <p className="font-serif text-charcoal/80 text-center">
                       Damit Sie und Ihr Kind sich gut mit unserem Konzept vertraut machen können, 
                       die Schule richtig "von innen" kennen lernen und dann entscheiden können, 
@@ -240,27 +233,27 @@ export default function AnmeldungPage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-start gap-3 p-4 bg-cream rounded-lg">
-                      <Phone className="h-5 w-5 text-schule mt-0.5 shrink-0" />
+                      <Phone className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
                       <div>
                         <h4 className="font-sans font-semibold text-charcoal">Telefon</h4>
-                        <a href="tel:+4318874053" className="font-serif text-charcoal/70 hover:text-schule transition-colors">
+                        <a href="tel:+4318874053" className="font-serif text-charcoal/70 hover:text-secondary transition-colors">
                           +43 1 887 40 53
                         </a>
                       </div>
                     </div>
                     
                     <div className="flex items-start gap-3 p-4 bg-cream rounded-lg">
-                      <Mail className="h-5 w-5 text-schule mt-0.5 shrink-0" />
+                      <Mail className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
                       <div>
                         <h4 className="font-sans font-semibold text-charcoal">E-Mail</h4>
-                        <a href="mailto:office@astrid-lindgren-zentrum.at" className="font-serif text-charcoal/70 hover:text-schule transition-colors">
+                        <a href="mailto:office@astrid-lindgren-zentrum.at" className="font-serif text-charcoal/70 hover:text-secondary transition-colors">
                           office@astrid-lindgren-zentrum.at
                         </a>
                       </div>
                     </div>
                     
                     <div className="flex items-start gap-3 p-4 bg-cream rounded-lg">
-                      <MapPin className="h-5 w-5 text-schule mt-0.5 shrink-0" />
+                      <MapPin className="h-5 w-5 text-secondary mt-0.5 shrink-0" />
                       <div>
                         <h4 className="font-sans font-semibold text-charcoal">Adresse</h4>
                         <p className="font-serif text-charcoal/70">
@@ -272,7 +265,7 @@ export default function AnmeldungPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="bg-schule text-white border-none shadow-lg">
+                <Card className="bg-secondary text-white border-none shadow-lg">
                   <CardHeader>
                     <CardTitle className="font-sans text-2xl">
                       Termin vereinbaren
@@ -285,7 +278,7 @@ export default function AnmeldungPage() {
                     </p>
                     <Button 
                       asChild 
-                      className="w-full bg-white text-schule hover:bg-white/90 font-sans font-bold"
+                      className="w-full bg-white text-secondary hover:bg-white/90 font-sans font-bold"
                     >
                       <Link href="/kontakt">
                         Jetzt Termin vereinbaren
@@ -301,7 +294,7 @@ export default function AnmeldungPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 bg-schule">
+      <section className="py-16 sm:py-20 bg-secondary">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-sans text-3xl font-bold text-white sm:text-4xl">
             Wir freuen uns auf Sie!
@@ -314,7 +307,7 @@ export default function AnmeldungPage() {
             <Button 
               asChild 
               size="lg" 
-              className="bg-white text-schule hover:bg-white/90 font-sans font-bold"
+              className="bg-white text-secondary hover:bg-white/90 font-sans font-bold"
             >
               <Link href="/kontakt">
                 Kontakt aufnehmen

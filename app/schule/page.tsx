@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { SchoolSubnav } from '@/components/school-subnav'
-import { School, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Schule',
@@ -106,18 +106,12 @@ const activities = [
 export default function SchulePage() {
   return (
     <>
-      <section className="bg-schule py-16 sm:py-24 pt-24">
+      <section className="bg-secondary py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-4">
-            <School className="h-8 w-8 text-white" />
-            <span className="text-white/80 font-sans text-sm uppercase tracking-wider">
-              Bildungsangebot
-            </span>
-          </div>
-          <h1 className="font-sans text-4xl font-extrabold text-white sm:text-5xl">
+          <h1 className="font-sans text-4xl font-extrabold text-cream sm:text-5xl">
             Unsere Schule
           </h1>
-          <p className="mt-4 font-serif text-xl text-white/90 max-w-2xl">
+          <p className="mt-4 font-serif text-xl text-cream/80 max-w-2xl">
             Von der Vorschule bis zur 9. Schulstufe - ein kompletter Bildungsweg
           </p>
         </div>
@@ -169,7 +163,7 @@ export default function SchulePage() {
               <tbody>
                 {dailySchedule.map((item, index) => (
                   <tr key={index} className="border-b border-charcoal/5">
-                    <td className="py-4 pr-4 font-sans font-bold text-schule">{item.time}</td>
+                    <td className="py-4 pr-4 font-sans font-bold text-secondary">{item.time}</td>
                     <td className="py-4 font-serif text-charcoal/80">{item.activity}</td>
                   </tr>
                 ))}
@@ -190,7 +184,7 @@ export default function SchulePage() {
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {activities.map((activity) => (
               <div key={activity.title} className="rounded-xl bg-cream p-8">
-                <h3 className="font-sans text-xl font-bold text-schule">
+                <h3 className="font-sans text-xl font-bold text-secondary">
                   {activity.title}
                 </h3>
                 <p className="mt-2 font-serif text-charcoal/70">
@@ -202,7 +196,7 @@ export default function SchulePage() {
         </div>
       </section>
 
-      <section className="py-16 sm:py-24 bg-schule">
+      <section className="py-16 sm:py-24 bg-secondary">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-sans text-3xl font-bold text-white sm:text-4xl">
             Haben Sie Fragen?
@@ -210,7 +204,7 @@ export default function SchulePage() {
           <p className="mt-4 font-serif text-lg text-white/90 max-w-2xl mx-auto">
             Wir beraten Sie gerne persönlich zu unserem Schulangebot.
           </p>
-          <Button className="mt-8 bg-white text-schule hover:bg-white/90 font-sans font-bold" asChild>
+          <Button className="mt-8 bg-white text-secondary hover:bg-white/90 font-sans font-bold" asChild>
             <Link href="/kontakt">Kontakt aufnehmen</Link>
           </Button>
         </div>
