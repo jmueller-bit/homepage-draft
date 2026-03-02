@@ -21,6 +21,10 @@ const subNavItems = [
     name: 'Anmeldung', 
     href: '/schule/anmeldung',
   },
+  { 
+    name: 'Eltern-Service', 
+    href: '/schule/eltern-service',
+  },
 ]
 
 export function SchoolSubnav({ 
